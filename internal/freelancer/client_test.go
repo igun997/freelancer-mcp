@@ -542,6 +542,20 @@ func TestAPIErrorHintsExplainRestrictions(t *testing.T) {
 	}
 }
 
+func TestAPIErrorParsesNestedRateLimit(t *testing.T) {
+	err := parseAPIError("POST", "https://www.freelancer.com/ajax-api/auth/login.php", http.StatusTooManyRequests, []byte(`{"status":"error","request_id":"d42f8a716dde3b4546ba359c1810d0ad","error":{"code":"TOO_MANY_REQUESTS","detail":"You have performed too many requests of this type, please try again later.","source":null}}`))
+	if err.Code != "TOO_MANY_REQUESTS" {
+		t.Fatalf("code = %q, want TOO_MANY_REQUESTS", err.Code)
+	}
+	if err.Message != "You have performed too many requests of this type, please try again later." {
+		t.Fatalf("message = %q", err.Message)
+	}
+	text := err.Error()
+	if !strings.Contains(text, "TOO_MANY_REQUESTS") || !strings.Contains(text, "hint: stop retrying") {
+		t.Fatalf("rate-limit error missing code/hint: %s", text)
+	}
+}
+
 func TestCanBidAppliesEveryGate(t *testing.T) {
 	limits := &AccountLimits{BidsRemaining: 3, BidLimit: 6, MaxBidUSD: VerifiedBidCeilingUSD}
 	if ok, _ := limits.CanBid(400, false); !ok {
