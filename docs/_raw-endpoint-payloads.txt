@@ -1,0 +1,1005 @@
+PUT    ${I(o.context.id)}/${o.id}
+?      ${a}
+POST   ${a}/cancel   payload: endpoint, method, payload, quotation_version_id, status
+PUT    ${a}/reject   payload: context_id, context_type, endpoint, method, payload, quotation_version_id, status
+POST   ${a}/revisions/${e.id}   payload: endpoint, method, payload, quotation_id, quotation_version_id, status
+PUT    ${a}/revisions/${e.id}   payload: context_id, context_type, endpoint, method, payload, quotation_version_id, status
+PUT    ${u(d.context.id)}/${d.id}
+DELETE /contests/0.1/comments/${e}/   payload: comment, timestamp
+PUT    /contests/0.1/entries/${a.id}/
+PUT    /contests/0.1/entries/${s.id}/
+GET    /projects/0.1/job_bundles
+GET    /projects/0.1/projects/fees
+GET    /users/0.1/referral_invitations/check
+GET    /users/0.1/referral_invitations/eligibility
+GET    abn/lookup.php
+GET    academy/getCourses.php
+GET    academy/getInstructors.php
+GET    academy/getPriceTiers.php
+PUT    academy/updateCourse.php
+?      ai-consultant/aiConsultantAudio.php   payload: audio, imports, input, ref, remove, result, set, type, update
+?      ai-consultant/aiConsultantChat.php
+?      ai-consultant/emailMe.php
+POST   ai/0.1/ai_change_tone   payload: imports, ref, remove, result, set, text, tone, type, update
+POST   ai/0.1/ai_continue_writing   payload: context, context_id, ref, remove, result, set, text, type, update
+POST   ai/0.1/ai_improve_writing   payload: context, context_id, ref, remove, result, set, text, type, update
+POST   ai/0.1/ai_proofread   payload: imports, language, ref, remove, result, set, text, type, update
+POST   ai/ai-conversation/start-service.php   payload: imports, remove, set, type, update
+POST   ai/playground/send.php   payload: model, moderators, seed, temperature, timeout, verbosity
+POST   ai/smart-canvas/make-real.php   payload: messages, remove, set, update
+POST   analytics/getAnalytics.php   payload: audience, custom_fields_filters, enterprise_id, job_ids, max_submit_date, min_submit_date, pool_ids, push, remove, set, update
+GET    banners/chooseBanner.php
+?      bids/generateBidDescription.php   payload: description, ref, remove, result, set, update
+POST   bookmarks/projectBookmarks.php   payload: order, ref, remove, result, subscribed, type
+GET    business-builder/attempt.php   payload: endpoint, method, payload, set, update
+POST   business-builder/attempt.php   payload: endpoint, method, payload, set, update
+PUT    business-builder/attempt.php   payload: remove
+GET    business-builder/template.php
+POST   business-builder/workspace.php   payload: endpoint, method, payload, remove
+GET    buyer/getBidAwardRevokeReasons.php
+POST   canvas/0.1/canvas   payload: context_type, endpoint, method, payload, remove, set, title, update
+PUT    canvas/0.1/canvas/${P.id}   payload: order, ref, remove, result, title
+PUT    canvas/0.1/canvas/${c.id}   payload: order, ref, remove, result, title
+PUT    canvas/0.1/canvas/permission/   payload: access_role, canvas_id, endpoint, method, new_role_mappings, payload, principals, remove, set, update
+DELETE canvas/0.1/canvas/permission/?ids[]=${n}   payload: order, ref, result
+DELETE canvas/0.1/canvas/permission/?ids[]=${s}   payload: order, ref, result
+DELETE canvas/0.1/canvas/permission/?ids[]=${u}   payload: order, ref, result
+GET    challenges/0.1/challenges
+PUT    common/0.1/content_customization/${i.id}   payload: order, ref, remove, result
+PUT    common/0.1/content_customizations/   payload: order, ref, remove, result
+GET    common/0.1/countries/
+GET    common/0.1/custom_banners/   payload: background_image_uuid, body, closeable, ctas, end_date, endpoint, entity_type, location, set, start_date, text_color, title, update
+GET    common/0.1/custom_field_relationships
+GET    common/0.1/custom_field_validations
+GET    common/0.1/enterprise_metadata_fields
+GET    common/0.1/guidelines
+GET    common/0.1/timezones
+?      contact-us/contactUs.php   payload: data, message, ref, remove, result, set, template, update
+GET    contacts/0.1/contacts
+PUT    contests/0.1/comments/${a.id}/   payload: comment, timestamp
+GET    contests/0.1/contests   payload: currency_id, description, draft, duration, featured, file_ids, job_ids, pool_ids, prize, remove, sealed, set, title, topcontest
+?      contests/0.1/contests/   payload: currency_id, custom_judging, description, draft, duration, featured, file_ids, highlighted, job_ids, nda, nonpublic, pool_ids, prize, remove
+POST   contests/0.1/contests/   payload: action, currency_id, description, draft, duration, job_ids, prize, set, title, type, update, upgrades
+POST   contests/0.1/contests/${(0,i.fE)(o,"contestId")[0]}/messages   payload: comment, contest_id, message, order, parent_id, ref, remove, result, set, threads, update
+PUT    contests/0.1/contests/${P.id}/
+?      contests/0.1/contests/${_.contestId}/invite   payload: document, imports, ref, remove, set, type, update
+GET    contests/0.1/contests/${d[0]}/judge_assignments   payload: entry_ids, set, update
+PUT    contests/0.1/contests/${e.id}/
+GET    contests/0.1/contests/${i}/interested_users/
+DELETE contests/0.1/contests/${n.contestId}/files/${r}
+DELETE contests/0.1/contests/${o.contestId}/judge_assignments   payload: endpoint, entry_ids, method, order, payload, ref, remove, result, set, update
+POST   contests/0.1/contests/${o}/files   payload: contest_id, endpoint, method, name, payload, remove, set, update
+POST   contests/0.1/contests/${r.contestId}/files   payload: contest_id, endpoint, method, name, payload, remove, set, update
+DELETE contests/0.1/contests/${s.contestId}/judge_assignments/${o}   payload: order, ref, result
+GET    contests/0.1/contests/${t}/rubrics/${s}/submissions   payload: order, ref, remove, result, scores, set, update
+GET    contests/0.1/contests/active/
+GET    contests/0.1/entrants/all
+GET    contests/0.1/entries   payload: description, files, fileset, original, title
+POST   contests/0.1/entries/${(0,A.fE)(n,"entryId")[0]}/messages   payload: comment, contest_id, entry_id, message, parent_id, remove, replies, result, set, update
+?      contests/0.1/entries/${a.entryId}/rubric_submissions   payload: document, order, ref, remove, result, scores, set, update
+GET    contests/0.1/entries/all
+GET    contests/0.1/handovers/
+PUT    contests/0.1/handovers/
+?      contests/0.1/handovers/${a.handoverId}/disputes/   payload: description, document, ref, remove, result, set, update
+PUT    contests/0.1/handovers/${d.id}   payload: address, city, country_code, fullname, phone, remove, state_code
+PUT    contests/0.1/handovers/${d.id}/   payload: endpoint
+DELETE contests/0.1/handovers/${d}/files   payload: endpoint, file_uuid, method, name, payload, remove, set, size, update, url
+DELETE contests/0.1/handovers/${e.handoverId}/files/   payload: endpoint, file_uuid, method, name, payload, remove, set, size, update, url
+DELETE contests/0.1/handovers/${o.handoverId}/files/${e}   payload: name, order, ref, result, size, url
+POST   contests/0.1/messages/   payload: action, comment, contest_id, endpoint, entry_id, file_id, message, method, order, parent_id, payload, ref, remove, replies
+POST   contests/0.1/offers/   payload: action, endpoint, message, method, payload, price_offer, update
+PUT    contests/0.1/offers/${_.id}/   payload: accepted, endpoint, message, method, payload, price_offer, remove, set
+GET    contests/0.1/polls/
+GET    contests/0.1/prize_details/
+?      contests/0.1/rubric   payload: order, ref, remove, result, sections, set, update
+GET    contests/0.1/rubric   payload: order, ref, remove, result, sections, set, update
+GET    contests/0.1/self/insights
+?      contests/addContestEntry.php   payload: description, files, fileset, original, title
+?      contests/entryFileUpload.php
+GET    contests/getBudgetRanges.php
+GET    contests/getContestEngagementData.php
+GET    contests/getContestEntryIds.php
+GET    contests/getContestEntryRequirements.php
+?      contests/getContestHandoverContractDetails.php
+GET    contests/getContestMinimumBudgetClassifications.php
+GET    contests/getContestsInterestedIn.php
+GET    contests/getFeesForCurrency.php
+GET    contests/getHasContestInvoice.php
+POST   contests/getHasGivenFeedback.php   payload: push, remove, role, set, update
+GET    contests/getInterestedFreelancers.php
+GET    contests/isContestCollaborationWhitelist.php
+?      contests/uploadTemporaryFile.php
+?      countries/states.php
+?      currency/detectCurrency.php
+GET    dashboard/get-account-progress.php
+GET    dashboard/get-dashboard-widgets.php
+PUT    dashboard/polls.php   payload: answered, answers, hide, question, remove
+GET    discover/categoryPageContent.php
+GET    domains/getDomains.php
+?      education/exams.php
+GET    encoded-urls/getEncodedUrl.php
+DELETE enterprise/deloitte_subscriber_emails.php   payload: email, endpoint, method, order, payload, ref, remove, result, set, update
+POST   enterprise/deloitte_subscriber_emails.php   payload: email, endpoint, method, order, payload, ref, remove, result, set, update
+?      enterprise/deloitte_subscriber_emails.php?email=${_}   payload: document, email, order, ref, result
+GET    enterprise/deloitte_user_info.php
+?      enterprise/enquiry.php   payload: captcha_response, company_name, company_size, contact_number, country, email, enquiry, imports, last_name, remove, set, source, type, update
+?      enterprise/field-services-talent.php
+?      enterprise/harvard/enquiry.php   payload: enquiry, imports, remove, set, type, update
+?      enterprise/loadshift/cancelGrandfatheredMembership.php   payload: imports, ref, remove, set, type, update
+GET    enterprise/loadshift/loadshiftSiteStats.php
+?      enterprise/loadshift/send-asset-finance-email.php   payload: imports, remove, set, type, update
+?      enterprise/mygigs-expression-of-interest.php
+DELETE external-reference/reference.php   payload: content, ref, result
+GET    external-reference/reference.php   payload: content, relationship, set, update
+PUT    external-reference/reference.php   payload: content, endpoint, method, payload, ref, relationship, remove, result, set, update
+POST   feed/0.1/feed   payload: feed_item_ids, remove
+POST   feed/0.1/feed/remove   payload: feed_item_ids, remove
+?      feed/0.1/feed/remove/   payload: context_id, context_type, from_time, from_user_id, imports, remove, remove_user, set, type, update
+PUT    feed/0.1/feed_meta
+PUT    feed/0.1/feed_meta/${p.id}
+?      feed/0.1/posts_pelican   payload: attachments, auxiliary_references, commenting_disabled, content, content_rich_text, feed_context_type, feed_item_reference_type, length, offset, reference_id, reference_type, set, text_entities
+PUT    files/0.1/files/   payload: drive_file, endpoint, filename, method, payload, public_permission, remove
+?      files/0.1/files/${I}   payload: deleted, time
+DELETE files/0.1/files/${S.id}   payload: drive_file, endpoint, filename, method, payload, public_permission, remove
+?      files/0.1/files/${T}   payload: deleted, time
+?      files/0.1/files/${a}   payload: deleted, time
+DELETE files/0.1/files/${b.id}   payload: drive_file, endpoint, filename, method, payload, public_permission, remove
+DELETE files/0.1/files/${e.fileId}/permissions/   payload: active, endpoint, method, order, payload, permission, ref, remove, result, set, update
+DELETE files/0.1/files/${f.id}   payload: drive_file, endpoint, filename, method, payload, public_permission, remove
+?      files/0.1/files/${g.id}
+DELETE files/0.1/files/${g.id}   payload: drive_file, endpoint, filename, method, payload, public_permission, remove
+?      files/0.1/files/${h}   payload: deleted, time
+DELETE files/0.1/files/${h}/permissions/   payload: active, endpoint, method, order, payload, permission, ref, remove, result, set, update
+DELETE files/0.1/files/${i}/permissions/   payload: active, endpoint, method, order, payload, permission, ref, remove, result, set, update
+DELETE files/0.1/files/${l.fileId}/permissions/   payload: active, endpoint, method, order, payload, permission, ref, remove, result, set, update
+?      files/0.1/files/${n}   payload: deleted, time
+DELETE files/0.1/files/${o.id}   payload: drive_file, endpoint, filename, method, payload, public_permission, remove
+DELETE files/0.1/files/${r.id}   payload: drive_file, endpoint, filename, method, payload, public_permission, remove
+?      files/0.1/files/${r}   payload: deleted, time
+?      files/0.1/permissions/${e}   payload: active, order, permission, ref, result
+?      files/0.1/permissions/${l}   payload: active, order, permission, ref, result
+GET    find-page/getFindPageDetails.php
+GET    flare/frontend-action-map.php
+GET    gdpr/userRequiresGdpr.php
+GET    give-get/giveGetUser.php
+GET    groups/0.1/feed
+GET    groups/0.1/groups
+PUT    groups/0.1/groups   payload: creator_id, creator_type, description, endpoint, group_type, method, name, order, payload, pool_ids, ref, remove, result, seo_url
+POST   groups/0.1/groups/${G}/members   payload: endpoint, group_id, member_id, method, payload, remove_reason, set, update, user_id
+?      groups/0.1/groups/${W[0]}/self/permissions/
+PUT    groups/0.1/groups/${a.id}/
+PUT    groups/0.1/groups/${c.id}/
+PUT    groups/0.1/groups/${f.id}/
+GET    groups/0.1/groups/${f}/attachments
+POST   groups/0.1/groups/${f}/members   payload: endpoint, group_id, member_id, method, payload, remove_reason, set, update, user_id
+POST   groups/0.1/groups/${k.groupId}/members   payload: endpoint, group_id, member_id, method, payload, remove, remove_reason, role, set, update, user_id
+PUT    groups/0.1/groups/${l.id}/
+PUT    groups/0.1/groups/${n.id}/
+PUT    groups/0.1/groups/${o.groupId}/members/${o.memberId}   payload: collection, endpoint, member_id, method, order, path, payload, ref, remove, result, role
+POST   groups/0.1/groups/${o.groupId}/members/${o.memberId}/remove   payload: endpoint, group_id, member_id, method, order, payload, ref, remove, result, role
+POST   groups/0.1/groups/${o.groupId}/members/${r}/remove   payload: collection, order, path, ref, result
+PUT    groups/0.1/groups/${o.id}/
+POST   groups/0.1/groups/${r.groupId}/members   payload: endpoint, group_id, member_id, method, payload, remove, remove_reason, role, set, update, user_id
+PUT    groups/0.1/groups/${r.id}/
+POST   groups/0.1/groups/${t.groupId}/members/${k}/remove   payload: collection, order, path, ref, result
+PUT    groups/0.1/groups/${t.groupId}/members/${t.memberId}   payload: collection, endpoint, member_id, method, order, path, payload, ref, remove, result, role
+POST   groups/0.1/groups/${t.groupId}/members/${t.memberId}/remove   payload: endpoint, group_id, member_id, method, order, payload, ref, remove, result, role
+?      groups/0.1/groups/${t[0]}/self/permissions/
+PUT    groups/0.1/groups/${u.id}/
+?      groups/0.1/groups/actions
+?      help-center/feedbackArticle.php   payload: direction, endpoint, feedback, fetch, field, imports, remove, set, type, update
+GET    help-center/getHelpCenterArticles.php
+GET    help-center/getHelpCenterArticlesFromEs.php
+GET    help-center/getIssueCategories.php
+GET    help-center/getPageView.php
+GET    help-center/getPartialSearchArticles.php
+GET    help-center/getSuggestedArticles.php
+GET    hire-page/getHirePageDetails.php
+POST   hireme-counteroffer/createHireMeCounteroffer.php   payload: comment, endpoint, method, payload, remove, set, status, update
+GET    hireme-counteroffer/getHireMeCounteroffer.php   payload: comment, set, update
+POST   hireme-counteroffer/updateHireMeCounteroffer.php   payload: comment, method, order, ref, remove, result, status
+DELETE job-post/drafts.php   payload: description, files, skills, title, version
+PUT    job-post/drafts.php   payload: description, endpoint, files, method, payload, remove, set, skills, title, update, version
+GET    jobs/classify.php
+GET    language/detectLanguage.php
+GET    language/getActiveLanguages.php
+GET    language/getLanguages.php
+?      lead-capture/saveLeadCaptureSubscriptionEmail.php   payload: email, ref, reference_id, reference_type, remove, result, set, source_type, update
+GET    llm-bid-search/bid-project-fit.php
+PUT    llm-bid-search/search-suggestions.php   payload: delta, order, ref, remove, result, suggestion, suggestions
+GET    localJobs/getTracks.php
+GET    manage/bids.php
+GET    manage/contests.php
+GET    manage/handovers.php
+GET    manage/projects.php
+GET    marketplace_stats/0.1/project-stats
+GET    memberships/0.1/benefits
+DELETE memberships/0.1/downgrades/   payload: duration, endpoint, method, status
+PUT    memberships/0.1/history_logs/   payload: auto_renew, delta, order, ref, remove, result
+DELETE memberships/0.1/packages/
+GET    memberships/0.1/packages/
+DELETE memberships/0.1/packages/${C}/   payload: imports, order, ref, result, type
+DELETE memberships/0.1/packages/${T}/   payload: imports, order, ref, result, type
+?      memberships/0.1/packages/${_.id}   payload: auto_renew, contract_quantity, currency, duration_cycle, duration_type, is_trial, order, quantity, ref, remove, result, set, update
+?      memberships/0.1/packages/${c.packageId}/?action=${c.action}   payload: auto_renew, contract_quantity, coupon, currency_id, duration_cycle, duration_type, is_trial, quantity, remove, set, trial, update
+DELETE memberships/0.1/packages/${c}/   payload: imports, order, ref, result, type
+DELETE memberships/0.1/packages/${i}/   payload: imports, order, ref, result, type
+DELETE memberships/0.1/packages/${l}/   payload: imports, order, ref, result, type
+DELETE memberships/0.1/packages/${r}/   payload: imports, order, ref, result, type
+POST   memberships/0.1/renewals   payload: duration, order, period, ref, remove, result, set, update
+PUT    memberships/0.1/renewals   payload: auto_renew, delta, order, ref, remove, result
+GET    memberships/0.1/trials/
+GET    memberships/getRecommendedMembership.php   payload: auto_renew, contract_quantity, currency, duration_cycle, duration_type, is_trial, order, quantity, ref, remove, result, set, update
+GET    memberships/sale.php
+GET    messages/0.1/comment_feeds/   payload: action, attachments_new, comment_feeds, content, context, length, message, message_source, offset, reference_id, reference_type, set, text_entities, thread_type
+PUT    messages/0.1/comment_feeds/   payload: action, attachments_new, comment_feeds, content, context, length, message, message_source, offset, reference_id, reference_type, set, text_entities, thread_type
+?      messages/0.1/comments/   payload: attachments_new, comment_ids, content, length, message, message_source, offset, parent_id, reason, reference_id, reference_type, set, text_entities, thread_id
+GET    messages/0.1/comments/   payload: attachments_new, comment_ids, content, length, message, message_source, offset, parent_id, reason, reference_id, reference_type, set, text_entities, thread_id
+?      messages/0.1/comments/delete/   payload: context_id, context_type, from_time, from_user_id, imports, remove, remove_user, set, type, update
+GET    messages/0.1/messages   payload: client_message_id, filename, files, quoted_message_id, remove, set, source, update
+GET    messages/0.1/threads   payload: action, context_type, members, message, set, source, thread_type, threads, update
+?      messages/0.1/threads/   payload: action, context_type, members, message, set, source, thread_type, threads, update
+GET    messages/0.1/threads/${(0,i.fE)(y,"threadId")}/attachments/
+?      messages/0.1/threads/${Te.threadId}/messages_new/   payload: client_message_id, filename, files, quoted_message_id, remove, set, source, update
+GET    messages/0.1/threads/search
+GET    messages/0.1/videochat
+GET    navigation/getNavigationTabs.php
+GET    navigation/project-feed/pre-populated-xp-projectcontest.php
+GET    navigation/project-feed/pre-populated.php
+GET    navigation/recent-projects-and-contests.php
+?      navigation/recent-saved-search-alerts.php
+GET    navigation/user-info.php
+GET    newsfeed/0.1/newsfeed
+GET    newsfeed/0.1/newsfeed/notifications
+?      notifications/preferences.php   payload: channel, enabled, header, name, notify, order, ref, remove, result, update
+GET    on-behalf-project/on-behalf-project.php   payload: ajax_new_pools, endpoint, params, payload, set, update
+PUT    on-behalf-project/on-behalf-project.php   payload: ajax_new_pools, endpoint, method, order, params, payload, ref, remove, result, set, status, update
+GET    open-graph/get-details.php
+GET    payment-verification/shouldPaymentVerify.php
+GET    payment/depositPageVars.php
+DELETE payments/0.1/authorization/${T}   payload: order, path, ref, result
+DELETE payments/0.1/authorization/${_}   payload: order, path, ref, result
+DELETE payments/0.1/authorization/${a}   payload: order, path, ref, result
+DELETE payments/0.1/authorization/${e}   payload: order, path, ref, result
+DELETE payments/0.1/authorization/${o}   payload: order, path, ref, result
+DELETE payments/0.1/authorization/${r}   payload: order, path, ref, result
+DELETE payments/0.1/authorization/${t}   payload: order, path, ref, result
+PUT    payments/0.1/authorizations   payload: endpoint, method, order, payload, ref, remove, result, set
+PUT    payments/0.1/cart_approvals/   payload: billing_agreement_id, comment, endpoint, method, payload, remove, set, status, update
+PUT    payments/0.1/cart_approvals/${a.id}
+PUT    payments/0.1/cart_approvals/${n.id}
+PUT    payments/0.1/cart_approvals/${o.id}
+PUT    payments/0.1/carts/   payload: action, description, destination, endpoint, method, payload, remove, set, status, time_created, update
+DELETE payments/0.1/carts/${_.cartId}/cart_items/${c}
+DELETE payments/0.1/carts/${a.cartId}/cart_items/   payload: amount, cart_id, context_id, context_sub_type, currency, description, endpoint, method, payload, remove, set, status, update
+DELETE payments/0.1/carts/${a.cartId}/cart_items/${d}
+DELETE payments/0.1/carts/${c.cartId}/cart_items/   payload: amount, cart_id, context_id, context_sub_type, currency, description, endpoint, method, payload, remove, set, status, update
+PUT    payments/0.1/carts/${c.id}
+DELETE payments/0.1/carts/${d.cartId}/cart_items/   payload: amount, cart_id, context_id, context_sub_type, currency, description, endpoint, method, payload, remove, set, status, update
+PUT    payments/0.1/carts/${d.id}
+DELETE payments/0.1/carts/${e.cartId}/cart_items/${r}
+DELETE payments/0.1/carts/${e.cartId}/cart_items/${s}
+PUT    payments/0.1/carts/${e.id}
+PUT    payments/0.1/carts/${i.id}
+DELETE payments/0.1/carts/${n.cartId}/cart_items/${a}
+DELETE payments/0.1/carts/${n.cartId}/cart_items/${t}
+PUT    payments/0.1/carts/${n.id}
+DELETE payments/0.1/carts/${r.cartId}/cart_items/   payload: amount, cart_id, context_id, context_sub_type, currency, description, endpoint, method, payload, remove, set, status, update
+DELETE payments/0.1/carts/${s.cartId}/cart_items/   payload: amount, cart_id, context_id, context_sub_type, currency, description, endpoint, method, payload, remove, set, status, update
+DELETE payments/0.1/carts/${t.cartId}/cart_items/   payload: amount, cart_id, context_id, context_sub_type, currency, description, endpoint, method, payload, remove, set, status, update
+GET    payments/0.1/exchange_rate
+GET    payments/0.1/iin/
+?      payments/0.1/payout_account   payload: account_alias, alias, currency_id, field_data, method, payout_method, remove, set, status, update
+GET    payments/0.1/payout_account_form
+GET    payments/0.1/payout_accounts
+?      payments/0.1/payout_context
+?      payments/0.1/payout_methods
+PUT    payments/0.1/preferred_authorization
+PUT    payments/0.1/preferred_authorizations
+PUT    payments/0.1/preferred_method   payload: endpoint, method, order, payload, ref, remove, result, set
+GET    payments/0.1/tax
+GET    payments/0.1/tax/opt_out
+?      payments/0.1/tax_statement   payload: document_date, document_title, remove, set, statement_type, update, user_id, validation_pattern
+GET    phone-verification/getBackoffTimeLeft.php
+GET    phone-verification/shouldPhoneVerify.php
+?      pjp-assistant/enqueueUserToPjpAssistantQueue.php   payload: imports, ref, remove, set, type, update
+GET    posts/0.1/files
+?      posts/0.1/files/
+GET    posts/0.1/posts   payload: attachments, commenting_disabled, content, content_rich_text, feed_context_type, feed_item_reference_type, length, offset, reference_id, reference_type, text_entities
+PUT    posts/0.1/posts/${D.id}   payload: attachments, commenting_disabled, content, content_rich_text, ref, remove, result, text_entities
+PUT    posts/0.1/posts/${d.id}   payload: attachments, commenting_disabled, content, content_rich_text, ref, remove, result, text_entities
+?      preferred-freelancer/support-ticket.php   payload: document, imports, message, ref, remove, set, type, update
+?      price-estimator/email-price-estimate.php   payload: currency_id, distance, dropoff_address, email, estimated_price_range, pickup_address, remove, set, source, tracking_id, update
+GET    project-ai-summary/project-summaries.php
+GET    project-spam-controls/getProjectSpamControls.php
+?      projects/0.1/bid_award_draft   payload: billing_cycle, remove, set, skip_hourly_contract, update, work_limit
+GET    projects/0.1/bid_award_draft/${(0,S.fE)(u,"bidId")[0]??""}   payload: billing_cycle, remove, set, skip_hourly_contract, update, work_limit
+GET    projects/0.1/bid_award_draft/${(0,a.fE)(o,"bidId")[0]??""}   payload: billing_cycle, remove, set, skip_hourly_contract, update, work_limit
+GET    projects/0.1/bid_award_draft/${(0,d.fE)(c,"bidId")[0]??""}   payload: billing_cycle, remove, set, skip_hourly_contract, update, work_limit
+GET    projects/0.1/bid_award_draft/${(0,d.fE)(i,"bidId")[0]??""}   payload: billing_cycle, remove, set, skip_hourly_contract, update, work_limit
+GET    projects/0.1/bid_award_draft/${(0,d.fE)(n,"bidId")[0]??""}   payload: billing_cycle, remove, set, skip_hourly_contract, update, work_limit
+GET    projects/0.1/bid_award_draft/${(0,i.fE)(e,"bidId")[0]??""}   payload: billing_cycle, remove, set, skip_hourly_contract, update, work_limit
+GET    projects/0.1/bid_award_draft/${(0,l.fE)(c,"bidId")[0]??""}   payload: billing_cycle, remove, set, skip_hourly_contract, update, work_limit
+GET    projects/0.1/bid_award_draft/${(0,o.fE)(i,"bidId")[0]??""}   payload: billing_cycle, remove, set, skip_hourly_contract, update, work_limit
+GET    projects/0.1/bid_award_draft/${(0,o.fE)(n,"bidId")[0]??""}   payload: billing_cycle, remove, set, skip_hourly_contract, update, work_limit
+GET    projects/0.1/bid_award_draft/${(0,r.fE)(n,"bidId")[0]??""}   payload: billing_cycle, remove, set, skip_hourly_contract, update, work_limit
+GET    projects/0.1/bid_award_draft/${(0,u.fE)(i,"bidId")[0]??""}   payload: billing_cycle, remove, set, skip_hourly_contract, update, work_limit
+GET    projects/0.1/bid_award_draft/${(0,w.fE)(x,"bidId")[0]??""}   payload: billing_cycle, remove, set, skip_hourly_contract, update, work_limit
+GET    projects/0.1/bids   payload: amount, bidder_id, description, milestone_percentage, period, profile_id, sponsored
+?      projects/0.1/bids/   payload: action, amount, bidder_id, billing_cycle, description, milestone_percentage, period, profile_id, skip_hourly_contract, sponsored, work_limit
+PUT    projects/0.1/bids/${(0,r.fE)(g,"bidId")}/bid_edit_requests/   payload: action, comment, endpoint, method, new_amount, new_period, payload, remove, set, status, update
+POST   projects/0.1/bids/${K.bidId}/pitch   payload: endpoint, method, order, payload, ref, remove, result, set, update
+?      projects/0.1/bids/${O.id}/billing_info
+DELETE projects/0.1/bids/${Re.bidId}/pitch   payload: order, ref, result
+?      projects/0.1/bids/${S.id}/billing_info
+?      projects/0.1/bids/${T.id}/billing_info
+PUT    projects/0.1/bids/${T}/bid_edit_requests/   payload: action, comment, endpoint, method, new_amount, new_period, payload, remove, set, status, update
+?      projects/0.1/bids/${c.id}/billing_info
+?      projects/0.1/bids/${d.id}/billing_info
+GET    projects/0.1/bids/${d}/time_tracking_aggregates/
+POST   projects/0.1/bids/${e.bidId}/time_tracking_sessions/   payload: action, endpoint, method, note, payload, remove, seconds, set, update
+?      projects/0.1/bids/${f.id}/billing_info
+?      projects/0.1/bids/${h.id}/billing_info
+?      projects/0.1/bids/${i.id}/billing_info
+?      projects/0.1/bids/${l.id}/billing_info
+?      projects/0.1/bids/${n.id}/billing_info
+GET    projects/0.1/bids/${o[0]}/bid_summaries
+GET    projects/0.1/bids/${pe(Re)}/pitch   payload: endpoint, method, order, payload, ref, remove, result, set, update
+?      projects/0.1/bids/${r.bidId}/bid_ratings   payload: comment, payload, position, rating, remove, showcase_id, showcases
+?      projects/0.1/bids/${r.id}/billing_info
+?      projects/0.1/bids/${s.id}/billing_info
+POST   projects/0.1/bids/${t[0]}/time_tracking_sessions/   payload: action, endpoint, method, note, payload, seconds, set, start_time, update
+GET    projects/0.1/bids/fees
+GET    projects/0.1/budgets
+?      projects/0.1/copilot_chat/   payload: project_id, ref, remove, result, set, update
+?      projects/0.1/copilot_enquiries/   payload: captcha_response, email, enquiry, imports, last_name, phone, remove, set, type, update
+GET    projects/0.1/currencies
+?      projects/0.1/equipment   payload: imports, ref, remove, result, set, type, update
+GET    projects/0.1/equipment   payload: imports, ref, remove, result, set, type, update
+GET    projects/0.1/equipment_groups
+DELETE projects/0.1/groups   payload: endpoint, group_id, method, order, payload, ref, remove, result, set, update
+DELETE projects/0.1/groups/   payload: endpoint, group_id, method, order, payload, ref, remove, result, set, update
+DELETE projects/0.1/groups/${d}/   payload: collection, order, path, ref, result
+DELETE projects/0.1/groups/${e}/   payload: collection, order, path, ref, result
+DELETE projects/0.1/groups/${i}/   payload: collection, order, path, ref, result
+DELETE projects/0.1/groups/${o}/   payload: collection, order, path, ref, result
+DELETE projects/0.1/groups/${r}/   payload: collection, order, path, ref, result
+DELETE projects/0.1/groups/${s}/   payload: collection, order, path, ref, result
+DELETE projects/0.1/groups/${t}/   payload: collection, order, path, ref, result
+DELETE projects/0.1/groups/${u}/   payload: collection, order, path, ref, result
+PUT    projects/0.1/hourly_contracts
+GET    projects/0.1/invoices
+GET    projects/0.1/jobs/
+POST   projects/0.1/load_price_estimates   payload: distance, height, job_id, length, push, quantity, weight, width
+?      projects/0.1/milestone_drafts   payload: bid_id, bidder_id, currency_id, description, milestone_request_id, order, project_id, project_invoice_id, project_owner_id, ref, remove, result, set, update
+GET    projects/0.1/milestone_drafts   payload: bid_id, bidder_id, currency_id, description, milestone_request_id, order, project_id, project_invoice_id, project_owner_id, ref, remove, result, set, update
+?      projects/0.1/milestone_requests   payload: amount, bid_id, description, fund_by_date, is_initial_payment, set, time_requested, update
+GET    projects/0.1/milestone_requests   payload: amount, bid_id, description, fund_by_date, is_initial_payment, set, time_requested, update
+PUT    projects/0.1/milestone_requests/${G}
+PUT    projects/0.1/milestone_requests/${a}
+PUT    projects/0.1/milestone_requests/${i}
+?      projects/0.1/milestones/   payload: action, amount, description, invoice_id, project_id, request_id, set, update
+GET    projects/0.1/milestones_v2   payload: amount, description, invoice_id, project_id, request_id
+GET    projects/0.1/projects
+?      projects/0.1/projects/   payload: bidperiod, billing_code, budget, currency, currency_id, description, equipment, hireme, hourly_project_info, is_quotation_project, jobs, language, local_details, location
+PUT    projects/0.1/projects/${(0,S.fE)(A,"projectId")[0]}/project_title_edit_request   payload: action, endpoint, method, payload, remove, set, status, update
+GET    projects/0.1/projects/${(0,n.fE)(t,"projectId")[0]}/bids
+GET    projects/0.1/projects/${(0,o.fE)(n,"projectId")[0]}/ip_contracts/
+GET    projects/0.1/projects/${(0,r.fE)(g,"projectId")}/bids
+PUT    projects/0.1/projects/${(0,s.fE)(a,"projectId")[0]}/project_title_edit_request   payload: action, endpoint, method, payload, remove, set, status, update
+GET    projects/0.1/projects/${(0,s.fE)(l,"projectId")[0]}/ip_contracts/
+?      projects/0.1/projects/${A.projectId}/invite   payload: message, ref, remove, result, set, update
+DELETE projects/0.1/projects/${D}
+DELETE projects/0.1/projects/${I}
+GET    projects/0.1/projects/${K?K[0]:""}/bid_score
+?      projects/0.1/projects/${O.projectId}
+?      projects/0.1/projects/${S.projectId}
+?      projects/0.1/projects/${T.projectId}
+GET    projects/0.1/projects/${a[0]}/collaborations
+?      projects/0.1/projects/${c.projectId}
+?      projects/0.1/projects/${d.projectId}
+DELETE projects/0.1/projects/${e}
+?      projects/0.1/projects/${f.projectId}
+?      projects/0.1/projects/${f.projectId}/invite   payload: message, ref, remove, result, set, update
+GET    projects/0.1/projects/${g}/bidinfo
+?      projects/0.1/projects/${g}/delivery_contacts/
+?      projects/0.1/projects/${h.projectId}
+?      projects/0.1/projects/${i.projectId}
+?      projects/0.1/projects/${i}/delivery_contacts/
+?      projects/0.1/projects/${l.projectId}
+PUT    projects/0.1/projects/${l.projectId}/project_title_edit_request   payload: action, endpoint, method, payload, remove, set, status, update
+?      projects/0.1/projects/${n.projectId}
+?      projects/0.1/projects/${n}/delivery_contacts/
+?      projects/0.1/projects/${o.projectId}/invite   payload: message, ref, remove, result, set, update
+GET    projects/0.1/projects/${p[0]}/collaborations
+DELETE projects/0.1/projects/${p}
+?      projects/0.1/projects/${r.projectId}
+?      projects/0.1/projects/${r.projectId}/invite   payload: message, ref, remove, result, set, update
+GET    projects/0.1/projects/${r[0]}/collaborations
+DELETE projects/0.1/projects/${r}
+?      projects/0.1/projects/${s.projectId}
+PUT    projects/0.1/projects/${u.projectId}/project_title_edit_request   payload: action, endpoint, method, payload, remove, set, status, update
+GET    projects/0.1/projects/active
+GET    projects/0.1/projects/all
+GET    projects/0.1/projects/bid_stats
+?      projects/0.1/projects/collaborations
+POST   projects/0.1/projects/enterprise_metadata_fields
+GET    projects/0.1/projects/is_free_bids
+?      projects/0.1/projects/project_title_edit_request/${A.id}   payload: delta, order, ref, remove, result, status
+?      projects/0.1/projects/project_title_edit_request/${a.id}   payload: delta, order, ref, remove, result, status
+GET    projects/0.1/projects/seo
+GET    projects/0.1/reviews/
+GET    projects/0.1/reviews/skills
+GET    projects/0.1/self
+GET    projects/0.1/self/insights
+GET    projects/0.1/self/insights/bids
+POST   projects/0.1/time_tracking_sessions/   payload: action, endpoint, method, note, payload, seconds, set, start_time, update
+DELETE projects/0.1/time_tracking_sessions/${e}
+GET    projects/0.1/timetracker/${o}/punches   payload: checksum, endpoint, remove, screenshot, session_id, set, timestamp, timezone, update
+GET    projects/0.1/timetracker/${s}/punches   payload: checksum, endpoint, remove, screenshot, session_id, set, timestamp, timezone, update
+DELETE projects/0.1/timetracker/punch   payload: checksum, endpoint, method, payload, remove, screenshot, session_id, set, timestamp, timezone, update
+DELETE projects/0.1/timetracker/punch/${n}/   payload: note, screenshot
+DELETE projects/0.1/timetracker/punch/${t}/   payload: note, screenshot
+GET    projects/classifyDescription.php
+POST   projects/freeRecruiterUpgrade.php   payload: document, imports, ref, remove, set, type, update
+GET    projects/freelancerCanBidOnProject.php
+?      projects/generateNextProjectRecommendations.php   payload: recommendations, remove, set, update
+?      projects/generateProjectDescriptionAI.php   payload: description, remove, set, update
+?      projects/generateProjectQuestionAI.php   payload: choices, question, remove, set, type, update
+GET    projects/getBidLimit.php
+GET    projects/getFeeExtraInfo.php
+GET    projects/getHasGivenFeedback.php
+GET    projects/getHourlyMilestoneInvoicesWithoutFeedback.php
+GET    projects/getHourlyProjectMilestoneFee.php
+GET    projects/isLookingForWork.php
+?      projects/modifyBidSellerFee.php
+?      projects/offer.php
+GET    projects/offer.php
+?      projects/recruiter-opt-out.php   payload: document, imports, ref, remove, set, type, update
+?      projects/unconfirmedAward.php   payload: imports, remove, set, type, update
+?      projects/upload.php
+?      projects/uploadTemporaryFile.php
+GET    projects/usersOnRussianProjects.php
+POST   pstn/dial-out.php   payload: direction, fetch, field, imports, push, recipient_id, remove, set, type, update
+?      pstn/proxy-assignment.php   payload: context_id, context_type, recipient_id, ref, remove, result, set, update
+POST   quotations/0.1/quotation_logos   payload: endpoint, is_default, method, payload, remove, set, update, url
+PUT    quotations/0.1/quotation_logos/${r.id}   payload: is_default, order, ref, remove, result, url
+?      quotations/0.1/quotations   payload: context_id, currency_id, parent_template_context_id, parent_template_version_id, set, update
+GET    quotations/0.1/quotations
+GET    quotations/0.1/quotations/${C}/items
+GET    quotations/0.1/quotations/${C}/items/${m}/revisions   payload: description, message, name, order, previous_item_version_id, quantity, quotation_id, unit_limit, unit_price, unit_type
+GET    quotations/0.1/quotations/${D}/items
+GET    quotations/0.1/quotations/${D}/items/${m}/revisions   payload: description, message, name, order, previous_item_version_id, quantity, quotation_id, unit_limit, unit_price, unit_type
+GET    quotations/0.1/quotations/${D}/items/${v}/revisions   payload: description, message, name, order, previous_item_version_id, quantity, quotation_id, unit_limit, unit_price, unit_type
+?      quotations/0.1/quotations/${E.quotationId}/items   payload: billing_frequency, currency_id, description, endpoint, order, quantity, set, unit_limit, unit_price, unit_type, update
+?      quotations/0.1/quotations/${E.quotationId}/items/${E.quotationItemId}/revisions   payload: currency_id, description, endpoint, message, name, order, payload, previous_item_version_id, quantity, quotation_id, unit_limit, unit_price, unit_type
+GET    quotations/0.1/quotations/${N}/items
+GET    quotations/0.1/quotations/${N}/items/${v}/revisions   payload: description, message, name, order, previous_item_version_id, quantity, quotation_id, unit_limit, unit_price, unit_type
+?      quotations/0.1/quotations/${O.quotation_id}/requests/${O.id}
+GET    quotations/0.1/quotations/${O[0]}/requests   payload: amount, item_id, item_version_id, quantity, quotation_version_id, request_type, set, update
+GET    quotations/0.1/quotations/${O}/items
+GET    quotations/0.1/quotations/${O}/items/${C}/revisions   payload: description, message, name, order, previous_item_version_id, quantity, quotation_id, unit_limit, unit_price, unit_type
+GET    quotations/0.1/quotations/${T}/items
+GET    quotations/0.1/quotations/${T}/items/${O}/revisions   payload: description, message, name, order, previous_item_version_id, quantity, quotation_id, unit_limit, unit_price, unit_type
+?      quotations/0.1/quotations/${_.quotationId}/items/${_.quotationItemId}/   payload: order, ref, result
+PUT    quotations/0.1/quotations/${_.quotationId}/items/${_.quotationItemId}/release   payload: endpoint
+PUT    quotations/0.1/quotations/${_.quotationId}/items/${_.quotationItemId}/revisions/${_.id}   payload: order, ref, result
+?      quotations/0.1/quotations/${_.quotationId}/requests   payload: amount, item_id, item_version_id, quantity, quotation_version_id, request_type, set, update
+?      quotations/0.1/quotations/${a.quotationId}/items/${a.quotationItemId}/   payload: order, ref, result
+PUT    quotations/0.1/quotations/${a.quotationId}/items/${a.quotationItemId}/release   payload: endpoint
+PUT    quotations/0.1/quotations/${a.quotationId}/items/${a.quotationItemId}/revisions/${a.id}   payload: order, ref, result
+?      quotations/0.1/quotations/${a.quotationId}/requests   payload: amount, item_id, item_version_id, quantity, quotation_version_id, request_type, set, update
+?      quotations/0.1/quotations/${a.quotation_id}/requests/${a.id}
+GET    quotations/0.1/quotations/${a[0]}/requests   payload: amount, item_id, item_version_id, quantity, quotation_version_id, request_type, set, update
+?      quotations/0.1/quotations/${c.quotationId}/items/${c.quotationItemId}/   payload: order, ref, result
+PUT    quotations/0.1/quotations/${c.quotationId}/items/${c.quotationItemId}/release   payload: endpoint
+PUT    quotations/0.1/quotations/${c.quotationId}/items/${c.quotationItemId}/revisions/${c.id}   payload: order, ref, result
+?      quotations/0.1/quotations/${d.quotationId}/items/${d.quotationItemId}/   payload: order, ref, result
+PUT    quotations/0.1/quotations/${d.quotationId}/items/${d.quotationItemId}/release   payload: endpoint
+PUT    quotations/0.1/quotations/${d.quotationId}/items/${d.quotationItemId}/revisions/${d.id}   payload: order, ref, result
+GET    quotations/0.1/quotations/${d}/quotation_funds
+?      quotations/0.1/quotations/${e.quotationId}/items   payload: billing_frequency, currency_id, description, endpoint, order, quantity, set, unit_limit, unit_price, unit_type, update
+?      quotations/0.1/quotations/${e.quotationId}/items/${e.quotationItemId}/revisions   payload: currency_id, description, endpoint, message, name, order, payload, previous_item_version_id, quantity, quotation_id, unit_limit, unit_price, unit_type
+GET    quotations/0.1/quotations/${e}/items
+GET    quotations/0.1/quotations/${e}/items/${N}/revisions   payload: description, message, name, order, previous_item_version_id, quantity, quotation_id, unit_limit, unit_price, unit_type
+GET    quotations/0.1/quotations/${h}/items
+GET    quotations/0.1/quotations/${h}/items/${D}/revisions   payload: description, message, name, order, previous_item_version_id, quantity, quotation_id, unit_limit, unit_price, unit_type
+GET    quotations/0.1/quotations/${h}/items/${v}/revisions   payload: description, message, name, order, previous_item_version_id, quantity, quotation_id, unit_limit, unit_price, unit_type
+?      quotations/0.1/quotations/${i.quotationId}/items/${i.quotationItemId}/   payload: order, ref, result
+PUT    quotations/0.1/quotations/${i.quotationId}/items/${i.quotationItemId}/release   payload: endpoint
+PUT    quotations/0.1/quotations/${i.quotationId}/items/${i.quotationItemId}/revisions/${i.id}   payload: order, ref, result
+?      quotations/0.1/quotations/${i.quotationId}/requests   payload: amount, item_id, item_version_id, quantity, quotation_version_id, request_type, set, update
+?      quotations/0.1/quotations/${i.quotation_id}/requests/${i.id}
+GET    quotations/0.1/quotations/${i[0]}/requests   payload: amount, item_id, item_version_id, quantity, quotation_version_id, request_type, set, update
+GET    quotations/0.1/quotations/${l}/items
+GET    quotations/0.1/quotations/${l}/items/${N}/revisions   payload: description, message, name, order, previous_item_version_id, quantity, quotation_id, unit_limit, unit_price, unit_type
+GET    quotations/0.1/quotations/${m}/items
+GET    quotations/0.1/quotations/${m}/items/${I}/revisions   payload: description, message, name, order, previous_item_version_id, quantity, quotation_id, unit_limit, unit_price, unit_type
+?      quotations/0.1/quotations/${n.id}/revisions/${n.quotation_version_id}
+?      quotations/0.1/quotations/${n.quotationId}/items/${n.quotationItemId}/   payload: order, ref, result
+PUT    quotations/0.1/quotations/${n.quotationId}/items/${n.quotationItemId}/release   payload: endpoint
+PUT    quotations/0.1/quotations/${n.quotationId}/items/${n.quotationItemId}/revisions/${n.id}   payload: order, ref, result
+GET    quotations/0.1/quotations/${n[0]}/revisions   payload: description, endpoint, estimated_end_date, estimated_start_date, is_requested_by_recipient, parent_version_id, rich_description, title, upfront_fund_request_amount
+?      quotations/0.1/quotations/${o.quotationId}/items   payload: billing_frequency, currency_id, description, endpoint, order, quantity, set, unit_limit, unit_price, unit_type, update
+?      quotations/0.1/quotations/${o.quotationId}/items/${o.quotationItemId}/   payload: order, ref, result
+PUT    quotations/0.1/quotations/${o.quotationId}/items/${o.quotationItemId}/release   payload: endpoint
+?      quotations/0.1/quotations/${o.quotationId}/items/${o.quotationItemId}/revisions   payload: currency_id, description, endpoint, message, name, order, payload, previous_item_version_id, quantity, quotation_id, unit_limit, unit_price, unit_type
+PUT    quotations/0.1/quotations/${o.quotationId}/items/${o.quotationItemId}/revisions/${o.id}   payload: order, ref, result
+?      quotations/0.1/quotations/${r.quotationId}/items   payload: billing_frequency, currency_id, description, endpoint, order, quantity, set, unit_limit, unit_price, unit_type, update
+?      quotations/0.1/quotations/${r.quotationId}/items/${r.quotationItemId}/revisions   payload: currency_id, description, endpoint, message, name, order, payload, previous_item_version_id, quantity, quotation_id, unit_limit, unit_price, unit_type
+GET    quotations/0.1/quotations/${r[0]}/revisions   payload: description, estimated_start_date, is_requested_by_recipient, parent_version_id, rich_description, title
+?      quotations/0.1/quotations/${s.quotationId}/items   payload: billing_frequency, currency_id, description, endpoint, order, quantity, set, unit_limit, unit_price, unit_type, update
+?      quotations/0.1/quotations/${s.quotationId}/items/${s.quotationItemId}/   payload: order, ref, result
+PUT    quotations/0.1/quotations/${s.quotationId}/items/${s.quotationItemId}/release   payload: endpoint
+?      quotations/0.1/quotations/${s.quotationId}/items/${s.quotationItemId}/revisions   payload: currency_id, description, endpoint, message, name, order, payload, previous_item_version_id, quantity, quotation_id, unit_limit, unit_price, unit_type
+PUT    quotations/0.1/quotations/${s.quotationId}/items/${s.quotationItemId}/revisions/${s.id}   payload: order, ref, result
+?      quotations/0.1/quotations/${t.quotationId}/items   payload: billing_frequency, currency_id, description, endpoint, order, quantity, set, unit_limit, unit_price, unit_type, update
+?      quotations/0.1/quotations/${t.quotationId}/items/${t.quotationItemId}/revisions   payload: currency_id, description, endpoint, message, name, order, payload, previous_item_version_id, quantity, quotation_id, unit_limit, unit_price, unit_type
+?      quotations/0.1/quotations/${t.quotationId}/revisions   payload: context_id, context_type, description, endpoint, estimated_end_date, estimated_start_date, is_requested_by_recipient, parent_version_id, payload, rich_description, title, upfront_fund_request_amount
+?      quotations/0.1/quotations/${v.quotation_id}/requests/${v.id}
+GET    quotations/0.1/quotations/${v[0]}/requests   payload: amount, item_id, item_version_id, quantity, quotation_version_id, request_type, set, update
+GET    quotations/0.1/quotations/${v}/items
+GET    quotations/0.1/quotations/${v}/items/${E}/revisions   payload: description, message, name, order, previous_item_version_id, quantity, quotation_id, unit_limit, unit_price, unit_type
+?      quotations/0.1/recurring_billing_information/   payload: order, payment_method, ref, remove, result, set, token, update
+GET    quotations/0.1/recurring_billing_information/   payload: order, payment_method, ref, remove, result, set, token, update
+PUT    quotations/0.1/scheduled_subscription_payments/   payload: method, remove, status
+PUT    quotations/0.1/scheduled_subscription_payments/${u}   payload: method, remove, status
+PUT    quotations/0.1/subscription_items/   payload: method, order, ref, remove, result, status
+PUT    quotations/0.1/subscription_items/${u}   payload: method, order, ref, remove, result, status
+GET    referral-token/getReferralToken.php
+?      retell/createPhoneCall.php   payload: ai_service_type, captcha_v2, captcha_v3, ref, remove, result, set, update, user_phone_number
+POST   retell/createWebCall.php   payload: access_token, agent_id, call_id, order, ref, remove, result, retell_llm_dynamic_variables, set, update
+?      retell/projectDetails.php   payload: ref, remove, result, set, update
+POST   rmpjp/review-step-chat.php   payload: edits, ref, remove, result, set, update
+GET    search/keywordProjects.php
+GET    search/topFreelancer.php
+GET    sem-dynamic-page-content/getSemDynamicPageContent.php
+?      seo-navbar/getSeoNavbar.php
+GET    service_offerings/0.1/service_offerings
+POST   service_offerings/0.1/service_offerings   payload: description, endpoint, job_ids, method, payload, remove, rich_description, service_offering_attachments, set, status, update
+PUT    service_offerings/0.1/service_offerings/${I.id}   payload: attachments, description, endpoint, job_ids, method, order, path, payload, ref, result, rich_description, service_offering_attachments, set, status
+PUT    service_offerings/0.1/service_offerings/${I.id}/attachments   payload: description, endpoint, job_ids, method, order, payload, ref, result, rich_description, service_offering_attachments, status, title
+PUT    service_offerings/0.1/service_offerings/${a.id}   payload: attachments, description, endpoint, job_ids, method, order, path, payload, ref, result, rich_description, service_offering_attachments, set, status
+PUT    service_offerings/0.1/service_offerings/${a.id}/attachments   payload: description, endpoint, job_ids, method, order, payload, ref, result, rich_description, service_offering_attachments, status, title
+POST   service_offerings/0.1/service_offerings/${e.serviceOfferingId}/attachments   payload: attachment_uuid, create_date, endpoint, method, payload, position, remove, service_offering_attachments, service_offering_id, set, update, uuids
+PUT    service_offerings/0.1/service_offerings/${i.id}   payload: attachments, description, endpoint, job_ids, method, order, path, payload, ref, result, rich_description, service_offering_attachments, set, status
+PUT    service_offerings/0.1/service_offerings/${i.id}/attachments   payload: description, endpoint, job_ids, method, order, payload, ref, result, rich_description, service_offering_attachments, status, title
+PUT    service_offerings/0.1/service_offerings/${l.id}   payload: attachments, description, endpoint, job_ids, method, order, path, payload, ref, result, rich_description, service_offering_attachments, set, status
+PUT    service_offerings/0.1/service_offerings/${l.id}/attachments   payload: description, endpoint, job_ids, method, order, payload, ref, result, rich_description, service_offering_attachments, status, title
+PUT    service_offerings/0.1/service_offerings/${n.id}   payload: attachments, description, endpoint, job_ids, method, order, path, payload, ref, result, rich_description, service_offering_attachments, set, status
+PUT    service_offerings/0.1/service_offerings/${n.id}/attachments   payload: description, endpoint, job_ids, method, order, payload, ref, result, rich_description, service_offering_attachments, status, title
+PUT    service_offerings/0.1/service_offerings/${o.id}   payload: attachments, description, endpoint, job_ids, method, order, path, payload, ref, result, rich_description, service_offering_attachments, set, status
+PUT    service_offerings/0.1/service_offerings/${o.id}/attachments   payload: description, endpoint, job_ids, method, order, payload, ref, result, rich_description, service_offering_attachments, status, title
+PUT    service_offerings/0.1/service_offerings/${s.id}   payload: attachments, description, endpoint, job_ids, method, order, path, payload, ref, result, rich_description, service_offering_attachments, set, status
+PUT    service_offerings/0.1/service_offerings/${s.id}/attachments   payload: description, endpoint, job_ids, method, order, payload, ref, result, rich_description, service_offering_attachments, status, title
+PUT    service_offerings/0.1/service_offerings/${t.id}   payload: attachments, description, endpoint, job_ids, method, order, path, payload, ref, result, rich_description, service_offering_attachments, set, status
+PUT    service_offerings/0.1/service_offerings/${t.id}/attachments   payload: description, endpoint, job_ids, method, order, payload, ref, result, rich_description, service_offering_attachments, status, title
+PUT    service_offerings/0.1/service_offerings/${t.serviceOfferingId}/attachments   payload: attachment_uuid, create_date, delete_date, endpoint, method, payload, position, remove, result, service_offering_attachments, service_offering_id
+GET    service_offerings/0.1/service_offerings/${v}/buyer_histories
+POST   service_offerings/0.1/service_offerings/shops   payload: banner_image_url, banner_image_uuid, description, endpoint, method, name, owner_id, payload, remove, set, shop, update
+POST   service_offerings/0.1/service_offerings/shops/${$}   payload: banner_image_url, banner_image_uuid, description, endpoint, method, name, owner_id, payload, remove, set, update
+DELETE service_offerings/0.1/service_offerings/shops/${Y.shopId}/categories/${Y.id}   payload: category, description, endpoint, method, name, order, payload, ref, result, set, shop_id, update
+PUT    service_offerings/0.1/service_offerings/shops/${Y.shopId}/categories/${Y.id}   payload: description, name, order, ref, result, shop_id
+DELETE service_offerings/0.1/service_offerings/shops/${e.shopId}/categories/${e.categoryId}/services/${e.id}   payload: order, ref, result, set, update
+DELETE service_offerings/0.1/service_offerings/shops/${n.id}   payload: attributes, banner_image_url, banner_image_uuid, description, endpoint, method, name, owner_id, payload, set, shop, update
+PUT    service_offerings/0.1/service_offerings/shops/${n.id}   payload: attributes, banner_image_url, banner_image_uuid, description, name, order, owner_id, ref, result
+POST   service_offerings/0.1/service_offerings/shops/${o.shopId}/categories/${o.categoryId}/services/   payload: category_id, endpoint, method, order, payload, ref, remove, result, service_offering_id, set, update
+POST   service_offerings/0.1/service_offerings/shops/${te}/categories   payload: category, description, endpoint, method, name, payload, remove, set, shop_id, update
+POST   service_offerings/0.1/service_offerings/shops/${te}/categories/${w[0]}   payload: description, endpoint, method, name, payload, remove, set, shop_id, update
+POST   service_offerings/0.1/service_offerings/shops/${t}   payload: banner_image_url, banner_image_uuid, description, endpoint, method, name, owner_id, payload, remove, set, update
+DELETE service_offerings/0.1/service_offerings/shops/${u.id}   payload: attributes, banner_image_url, banner_image_uuid, description, endpoint, method, name, owner_id, payload, set, shop, update
+PUT    service_offerings/0.1/service_offerings/shops/${u.id}   payload: attributes, banner_image_url, banner_image_uuid, description, name, order, owner_id, ref, result
+POST   service_offerings/0.1/service_offerings/shops/${w.shopId}/categories   payload: category, description, endpoint, method, name, payload, remove, set, shop_id, update
+GET    showcase/getShowcaseSources.php   payload: budget, currency, description, parent_source_id, publishable, remove, set, timestamp, title, type, update
+?      showcase/savePublishableWork.php   payload: budget, currency, description, parent_source_id, publishable, remove, set, timestamp, title, type, update
+?      showcase/uploadFile.php
+GET    site-stats.php
+?      skills/predict-llm.php   payload: description, ref, remove, result, set, suggested, tags, title, update
+GET    skills/predict.php
+GET    skills/suggest.php
+GET    skills/top-skills.php
+GET    sla/0.1/tasks/time_tracking/
+GET    superuser/0.1/admin_messages
+GET    superuser/0.1/admin_threads
+GET    superuser/0.1/admin_threads/search
+GET    superuser/0.1/agent_sessions/
+?      superuser/0.1/bids   payload: amount, bidder_id, description, milestone_percentage, order, period, ref, remove, result, set, sponsored, update
+GET    superuser/0.1/bids   payload: amount, bidder_id, description, milestone_percentage, order, period, ref, remove, result, set, sponsored, update
+PUT    superuser/0.1/custom_banners/   payload: background_image_uuid, body, closeable, ctas, end_date, endpoint, entity_type, location, method, payload, set, start_date, text_color, title
+PUT    superuser/0.1/custom_banners/${M.id}/   payload: background_image_uuid, body, closeable, ctas, end_date, order, ref, remove, result, start_date, text_color, title
+DELETE superuser/0.1/groups/${a}/   payload: order, ref, result
+POST   superuser/0.1/groups/${c.groupId}/members/${i}/remove   payload: created, order, ref, result, role, set
+PUT    superuser/0.1/groups/${c}/members/${_}   payload: created, endpoint, group_id, method, order, payload, ref, remove, result, role, set
+POST   superuser/0.1/groups/${d}/members   payload: created, endpoint, group_id, member_id, method, payload, remove, role, set, update, user_id
+POST   superuser/0.1/groups/${i.groupId}/members/   payload: created, endpoint, group_id, member_id, method, payload, remove, role, set, update, user_id
+PUT    superuser/0.1/groups/${i.id}/   payload: description, endpoint, method, order, payload, ref, remove, result, seo_url, status
+PUT    superuser/0.1/groups/${i[0]}/permissions/   payload: enabled, endpoint, group_id, permission, permissions, remove
+?      superuser/0.1/groups/${s.id}/permissions/
+GET    superuser/0.1/milestones_v2
+?      superuser/0.1/project_notes   payload: description, note_type, project_id, remove, set, update
+GET    superuser/0.1/project_notes   payload: description, note_type, project_id, remove, set, update
+GET    superuser/0.1/projects
+PUT    superuser/0.1/projects/${g.id}
+PUT    superuser/0.1/projects/${p.id}
+POST   superuser/0.1/projects/all   payload: custom_fields, enterprise_ids, limit, location_details, offset, pool_ids, projection, push, remove, result_projection, set, update
+GET    superuser/0.1/tasks
+GET    superuser/0.1/tasks/groups
+GET    superuser/0.1/tasks/sections
+PUT    superuser/0.1/users   payload: allow_contact, email, remove, type
+POST   support/0.1/agent_sessions   payload: agent, agent_id, endpoint, method, payload, session_id, set, source, source_type, support_tag_ids, support_type, update
+POST   support/0.1/agent_sessions/   payload: agent, agent_id, endpoint, method, payload, session_id, set, source, source_type, support_tag_ids, support_type, update
+POST   support/0.1/agent_sessions/${_.id}/assign   payload: action, endpoint, method, payload, resolve_reason_ids
+POST   support/0.1/agent_sessions/${_.id}/reassign   payload: endpoint, method, payload, remove
+POST   support/0.1/agent_sessions/${_.id}/resolve   payload: agent_id, agent_notes, endpoint, method, payload, resolve_description, resolve_reason_ids
+POST   support/0.1/agent_sessions/${_.id}/star   payload: remove
+POST   support/0.1/agent_sessions/${_.id}/unstar   payload: endpoint, method, payload, remove
+POST   support/0.1/agent_sessions/${e.id}/assign   payload: action, endpoint, method, payload, resolve_reason_ids
+POST   support/0.1/agent_sessions/${e.id}/reassign   payload: endpoint, method, payload, remove
+POST   support/0.1/agent_sessions/${e.id}/resolve   payload: agent_id, agent_notes, endpoint, method, payload, resolve_description, resolve_reason_ids
+POST   support/0.1/agent_sessions/${e.id}/star   payload: remove
+POST   support/0.1/agent_sessions/${e.id}/unstar   payload: endpoint, method, payload, remove
+POST   support/0.1/agent_sessions/${g.id}/assign   payload: action, endpoint, method, payload, resolve_reason_ids
+POST   support/0.1/agent_sessions/${g.id}/reassign   payload: endpoint, method, payload, remove
+POST   support/0.1/agent_sessions/${g.id}/resolve   payload: agent_id, agent_notes, endpoint, method, payload, resolve_description, resolve_reason_ids
+POST   support/0.1/agent_sessions/${g.id}/star   payload: remove
+POST   support/0.1/agent_sessions/${g.id}/unstar   payload: endpoint, method, payload, remove
+POST   support/0.1/agent_sessions/${h.id}/assign   payload: action, endpoint, method, payload, resolve_reason_ids
+POST   support/0.1/agent_sessions/${h.id}/reassign   payload: endpoint, method, payload, remove
+POST   support/0.1/agent_sessions/${h.id}/resolve   payload: agent_id, agent_notes, endpoint, method, payload, resolve_description, resolve_reason_ids
+POST   support/0.1/agent_sessions/${h.id}/star   payload: remove
+POST   support/0.1/agent_sessions/${h.id}/unstar   payload: endpoint, method, payload, remove
+POST   support/0.1/agent_sessions/${o.id}/assign   payload: action, endpoint, method, payload, resolve_reason_ids
+POST   support/0.1/agent_sessions/${o.id}/reassign   payload: endpoint, method, payload, remove
+POST   support/0.1/agent_sessions/${o.id}/resolve   payload: agent_id, agent_notes, endpoint, method, payload, resolve_description, resolve_reason_ids
+POST   support/0.1/agent_sessions/${o.id}/star   payload: remove
+POST   support/0.1/agent_sessions/${o.id}/unstar   payload: endpoint, method, payload, remove
+POST   support/0.1/agent_sessions/${s.id}/assign   payload: action, endpoint, method, payload, resolve_reason_ids
+POST   support/0.1/agent_sessions/${s.id}/reassign   payload: endpoint, method, payload, remove
+POST   support/0.1/agent_sessions/${s.id}/resolve   payload: agent_id, agent_notes, endpoint, method, payload, resolve_description, resolve_reason_ids
+POST   support/0.1/agent_sessions/${s.id}/star   payload: remove
+POST   support/0.1/agent_sessions/${s.id}/unstar   payload: endpoint, method, payload, remove
+POST   support/0.1/agents/   payload: delta, order, owner, ref, remove, result, state, type
+POST   support/0.1/agents/${e.id}/state   payload: delta, order, owner, ref, remove, result, state, type
+POST   support/0.1/agents/${h.id}/state   payload: delta, order, owner, ref, remove, result, state, type
+POST   support/0.1/agents/${i.id}/state   payload: delta, order, owner, ref, remove, result, state, type
+POST   support/0.1/agents/${m.id}/state   payload: delta, order, owner, ref, remove, result, state, type
+POST   support/0.1/agents/${n.id}/state   payload: delta, order, owner, ref, remove, result, state, type
+POST   support/0.1/agents/${t.id}/state   payload: delta, order, owner, ref, remove, result, state, type
+POST   support/0.1/agents/${u.id}/state   payload: delta, order, owner, ref, remove, result, state, type
+POST   support/0.1/chats   payload: endpoint, issue_category_id, method, order, payload, ref, remove, result, set, update
+PUT    support/0.1/chats/${f.id}/   payload: order, ref, remove, result
+POST   support/0.1/chats/${o[0]}/   payload: endpoint, issue_category_id, method, order, payload, ref, remove, result, set, update
+GET    support/0.1/resolve_reasons/
+POST   support/0.1/sessions/${c.sessionId}/tags   payload: agent_id, endpoint, method, payload, support_tag_ids, update
+POST   support/0.1/sessions/${d.sessionId}/tags   payload: agent_id, endpoint, method, payload, support_tag_ids, update
+POST   support/0.1/sessions/${e.sessionId}/tags   payload: agent_id, endpoint, method, payload, support_tag_ids, update
+POST   support/0.1/sessions/${l.sessionId}/tags   payload: agent_id, endpoint, method, payload, support_tag_ids, update
+?      support/feedback.php   payload: clarity, date_resolved, feedback, friendliness, knowledge, rating, remove, responsiveness, set, update
+GET    support/userIsAllowedFeedback.php
+GET    swift-id/applicant.php   payload: document, order, ref, remove, result, set, update
+POST   swift-id/applicant.php   payload: document, order, ref, remove, result, set, update
+GET    swift-id/application.php   payload: document, endpoint, method, order, payload, ref, remove, result, set, update
+POST   swift-id/application.php   payload: document, endpoint, method, order, payload, ref, remove, result, set, update
+PUT    swift-id/application.php   payload: document, order, ref, remove, result, update
+GET    swift-id/applications.php
+POST   swift-id/enqueueApplication.php   payload: direction, endpoint, fetch, field, imports, method, params, remove, set, type, update
+GET    swift-id/enum.php
+PUT    swift-id/invitation.php   payload: endpoint, method, payload, remove, set, status, update
+?      tasks/0.1/tasks   payload: assignee_id, description, due_date, next_task_id, previous_task_id, section_id, set, start_date, status, task_id, title, update
+GET    tasks/0.1/tasks   payload: assignee_id, description, due_date, previous_task_id, section_id, set, start_date, status, task_id, title, update
+POST   tasks/0.1/tasks/groups   payload: description, endpoint, linked_sources, method, name, payload, remove, set, status, update
+GET    tasks/0.1/tasks/groups/${W}/members
+PUT    tasks/0.1/tasks/groups/${c.id}   payload: description, endpoint, linked_sources, method, name, payload, remove, status
+DELETE tasks/0.1/tasks/groups/${u}   payload: order, ref, result
+GET    tasks/0.1/tasks/sections
+?      this_is_not_used
+GET    timelines/0.1/timelines/
+?      tracking/consent-mode.php
+GET    trust-and-safety/userRequiresEmailVerification.php
+GET    us-states/usStates.php
+GET    user-ip/userHasDuplicateIp.php
+GET    user-profile/canViewEmployerProfile.php
+GET    user-profile/nextPreviousUsers.php
+GET    user-profile/similarFreelancers.php
+GET    user-profile/similarShowcases.php
+GET    user-profile/skillsSubNavItems.php
+POST   user/consent.php   payload: ref, remove, result, set, update
+GET    user/getUserInsignias.php
+GET    user/getUserRestrictionDetails.php
+?      user/interactions.php   payload: order, ref, remove, result, set, update
+GET    user/interactions.php   payload: order, ref, remove, result, set, update
+?      user/isUserPotentiallyCalifornian.php
+POST   user/leaveExpertCommunity.php   payload: order, ref, result, type
+GET    user/onboarding-email-change-eligible.php   payload: device_token, email, order, ref, remove, result, set, update
+POST   user/onboarding-email-change.php   payload: device_token, email, order, ref, remove, result, set, update
+DELETE user/settings/securityPhoneRequest.php   payload: order, ref, result
+?      user/uploadResume.php   payload: imports, remove, set, type, update
+?      user/userParsedResume.php   payload: company, country, degree, description, educations, experiences, remove, set, title, update
+POST   users/0.1/ai-prompts   payload: context_id, context_reference, context_type, creator_type, endpoint, is_default, is_enabled, method, name, payload, remove, set, template, update
+PUT    users/0.1/ai-prompts/   payload: context_id, context_reference, context_type, creator_type, endpoint, is_default, is_enabled, method, name, payload, remove, template
+?      users/0.1/ai-prompts/${u}   payload: name, order, ref, result, template
+GET    users/0.1/articles
+?      users/0.1/availabilities   payload: attachments, available_capacity, end_date_max, end_date_min, equipment_groups, location, minimum_budget, preferred_destination_operating_area_ids, start_date_max, start_date_min, title
+GET    users/0.1/availabilities
+?      users/0.1/availabilities/${$}   payload: delta, order, ref, result
+PUT    users/0.1/availabilities/${D.id}   payload: delta, order, ref, result
+?      users/0.1/availabilities/${e}   payload: delta, order, ref, result
+PUT    users/0.1/availabilities/${f.id}   payload: delta, order, ref, result
+PUT    users/0.1/availabilities/${g.id}   payload: delta, order, ref, result
+?      users/0.1/availabilities/${i}   payload: delta, order, ref, result
+PUT    users/0.1/availabilities/${j.id}   payload: delta, order, ref, result
+?      users/0.1/availabilities/${t}   payload: delta, order, ref, result
+GET    users/0.1/campaign
+PUT    users/0.1/certifications   payload: awarded_date, certificate, certification_id, description, endpoint, method, organization, payload, remove, set, update
+DELETE users/0.1/certifications/${r}   payload: certificate, description, document, organization, ref
+PUT    users/0.1/certifications/${t.id}   payload: awarded_date, certificate, certification_id, description, endpoint, method, organization, payload, remove
+POST   users/0.1/check_in/preferred_schedule   payload: context_id, context_owner_users_id, context_type, days_of_month, days_of_week, endpoint, method, payload, preferred_schedule, remove, schedule_type, schedule_users_id, set, update
+POST   users/0.1/check_in/schedule/   payload: context_id, context_owner_users_id, context_type, days_of_month, days_of_week, endpoint, method, payload, preferred_schedule, remove, schedule_type, schedule_users_id, set, update
+?      users/0.1/colleagues/search
+POST   users/0.1/connections/search   payload: connection_types, excluded_terms, limit, next_cursor, push, remove, score, set, status, update
+GET    users/0.1/discover_collection/${_}
+GET    users/0.1/discover_collection_items/save_count/
+PUT    users/0.1/discover_collections   payload: collection_type, description, endpoint, is_private, method, name, payload, remove, set, update
+DELETE users/0.1/discover_collections/${C.collectionId}/discover_collection_items   payload: context, description, endpoint, item_id, item_type, method, name, order, payload, remove, set, thumbnail, type, update
+DELETE users/0.1/discover_collections/${C}/discover_collection_items   payload: description, endpoint, item_id, item_type, method, name, payload, remove, set, update
+DELETE users/0.1/discover_collections/${C}/discover_collection_items/${r}
+DELETE users/0.1/discover_collections/${D.collectionId}/discover_collection_items   payload: context, description, endpoint, item_id, item_type, method, name, order, payload, remove, set, thumbnail, type, update
+DELETE users/0.1/discover_collections/${D}/discover_collection_items   payload: description, endpoint, item_id, item_type, method, name, payload, remove, set, update
+DELETE users/0.1/discover_collections/${I}/discover_collection_items   payload: description, endpoint, item_id, item_type, method, name, payload, remove, set, update
+DELETE users/0.1/discover_collections/${L}/discover_collection_items   payload: description, endpoint, item_id, item_type, method, name, payload, remove, set, update
+DELETE users/0.1/discover_collections/${M}/discover_collection_items   payload: description, endpoint, item_id, item_type, method, name, payload, remove, set, update
+DELETE users/0.1/discover_collections/${P}/discover_collection_items   payload: description, endpoint, item_id, item_type, method, name, payload, remove, set, update
+DELETE users/0.1/discover_collections/${R}/discover_collection_items/${m}
+DELETE users/0.1/discover_collections/${U}/discover_collection_items   payload: description, endpoint, item_id, item_type, method, name, payload, remove, set, update
+DELETE users/0.1/discover_collections/${_.collectionId}/discover_collection_items   payload: context, description, endpoint, item_id, item_type, method, name, order, payload, remove, set, thumbnail, type, update
+DELETE users/0.1/discover_collections/${_}/discover_collection_items/${o}
+DELETE users/0.1/discover_collections/${a.collectionId}/discover_collection_items   payload: context, description, endpoint, item_id, item_type, method, name, order, payload, remove, set, thumbnail, type, update
+PUT    users/0.1/discover_collections/${a.id}   payload: description, endpoint, is_private, method, payload, ref, remove, result
+DELETE users/0.1/discover_collections/${a}/discover_collection_items   payload: description, endpoint, item_id, item_type, method, name, payload, remove, set, update
+DELETE users/0.1/discover_collections/${a}/discover_collection_items/${r}
+DELETE users/0.1/discover_collections/${c.collectionId}/discover_collection_items   payload: context, description, endpoint, item_id, item_type, method, name, order, payload, remove, set, thumbnail, type, update
+DELETE users/0.1/discover_collections/${c}/discover_collection_items/${n}
+DELETE users/0.1/discover_collections/${d}/discover_collection_items/${o}
+DELETE users/0.1/discover_collections/${e}   payload: collection, path, ref, result
+DELETE users/0.1/discover_collections/${e}/discover_collection_items/${_}
+DELETE users/0.1/discover_collections/${e}/discover_collection_items/${m}
+DELETE users/0.1/discover_collections/${g}/discover_collection_items/${D}
+DELETE users/0.1/discover_collections/${h}/discover_collection_items/${C}
+DELETE users/0.1/discover_collections/${i.collectionId}/discover_collection_items   payload: context, description, endpoint, item_id, item_type, method, name, order, payload, remove, set, thumbnail, type, update
+DELETE users/0.1/discover_collections/${l}/discover_collection_items   payload: description, endpoint, item_id, item_type, method, name, payload, remove, set, update
+DELETE users/0.1/discover_collections/${l}/discover_collection_items/${n}
+DELETE users/0.1/discover_collections/${l}/discover_collection_items/${o}
+DELETE users/0.1/discover_collections/${m.collectionId}/discover_collection_items   payload: context, description, endpoint, item_id, item_type, method, name, order, payload, remove, set, thumbnail, type, update
+DELETE users/0.1/discover_collections/${m}/discover_collection_items/${a}
+DELETE users/0.1/discover_collections/${n.collectionId}/discover_collection_items   payload: context, description, endpoint, item_id, item_type, method, name, order, payload, remove, set, thumbnail, type, update
+DELETE users/0.1/discover_collections/${n}/discover_collection_items/${c}
+DELETE users/0.1/discover_collections/${o.collectionId}/discover_collection_items   payload: context, description, endpoint, item_id, item_type, method, name, order, payload, remove, set, thumbnail, type, update
+DELETE users/0.1/discover_collections/${o}   payload: collection, path, ref, result
+DELETE users/0.1/discover_collections/${o}/discover_collection_items   payload: description, endpoint, item_id, item_type, method, name, payload, remove, set, update
+DELETE users/0.1/discover_collections/${o}/discover_collection_items/${i}
+DELETE users/0.1/discover_collections/${p}/discover_collection_items   payload: description, endpoint, item_id, item_type, method, name, payload, remove, set, update
+DELETE users/0.1/discover_collections/${p}/discover_collection_items/${a}
+DELETE users/0.1/discover_collections/${r.collectionId}/discover_collection_items   payload: context, description, endpoint, item_id, item_type, method, name, order, payload, remove, set, thumbnail, type, update
+PUT    users/0.1/discover_collections/${r.id}   payload: description, endpoint, is_private, method, payload, ref, remove, result
+DELETE users/0.1/discover_collections/${r}/discover_collection_items/${t}
+DELETE users/0.1/discover_collections/${t.collectionId}/discover_collection_items   payload: context, description, endpoint, item_id, item_type, method, name, order, payload, remove, set, thumbnail, type, update
+PUT    users/0.1/discover_collections/${t.id}   payload: description, endpoint, is_private, method, payload, ref, remove, result
+DELETE users/0.1/discover_collections/${x}/discover_collection_items   payload: description, endpoint, item_id, item_type, method, name, payload, remove, set, update
+DELETE users/0.1/discover_collections/${y}/discover_collection_items   payload: description, endpoint, item_id, item_type, method, name, payload, remove, set, update
+DELETE users/0.1/discover_collections/${z}/discover_collection_items   payload: description, endpoint, item_id, item_type, method, name, payload, remove, set, update
+PUT    users/0.1/educations   payload: country_code, degree, education_id, end_date, endpoint, method, payload, remove, school_id, set, start_date, update
+PUT    users/0.1/educations/${i.id}   payload: country, country_code, degree, end_date, endpoint, method, ordering, payload, remove, school_id, start_date, state
+DELETE users/0.1/educations/${n}   payload: country, degree, duration, ordering, state
+GET    users/0.1/enterprise_billing_agreements/
+PUT    users/0.1/enterprises/   payload: avatar_file_id, description, endpoint, has_insource_pool, landing_page_url, logo_file_id, method, name, payload, remove, set, update
+PUT    users/0.1/enterprises/${Ue.id}   payload: avatar_file_id, description, landing_page_url, logo_file_id, remove
+PUT    users/0.1/enterprises/${d.id}   payload: avatar_file_id, description, landing_page_url, logo_file_id, remove
+PUT    users/0.1/enterprises/${i.id}   payload: avatar_file_id, description, landing_page_url, logo_file_id, remove
+PUT    users/0.1/enterprises/${n.id}   payload: avatar_file_id, description, landing_page_url, logo_file_id, remove
+PUT    users/0.1/enterprises/${o.id}   payload: avatar_file_id, description, landing_page_url, logo_file_id, remove
+PUT    users/0.1/enterprises/${r.id}   payload: avatar_file_id, description, landing_page_url, logo_file_id, remove
+PUT    users/0.1/enterprises/${s.id}   payload: avatar_file_id, description, landing_page_url, logo_file_id, remove
+PUT    users/0.1/experiences   payload: city, company, country_code, description, end_date, set, start_date, update
+DELETE users/0.1/experiences/${i}   payload: city, company, country, description, document, duration, ordering, ref, title
+DELETE users/0.1/experiences/${o}   payload: city, company, country, description, document, duration, ordering, ref, title
+PUT    users/0.1/experiences/${r.id}   payload: city, company, country_code, description, end_date, endpoint, experience_id, method, ordering, payload, remove, start_date, title
+PUT    users/0.1/experiences/${s.id}   payload: city, company, country_code, description, end_date, endpoint, experience_id, method, ordering, payload, remove, start_date, title
+POST   users/0.1/feedback/   payload: body, imports, rating, remove, set, source, source_id, type, update
+?      users/0.1/grants   payload: entity_type, order, ref, remove, resource, result, role_id, set, update
+DELETE users/0.1/grants   payload: endpoint, entity_type, field, method, payload, remove, resource, role_id, set, update
+GET    users/0.1/grants   payload: entity_type, remove, resource, role_id, set, update
+?      users/0.1/grants/${s}   payload: collection, direction, field, path, ref, result
+?      users/0.1/invitation_blocks/   payload: ref, remove, result, set, status, update
+GET    users/0.1/invitations/   payload: custom_message, invitation_type, invitee_entity_id, invitee_entity_type, invitee_user_email, set, update
+PUT    users/0.1/invitations/   payload: custom_message, endpoint, invitation_id, invitation_type, invitee_entity_id, invitee_entity_type, invitee_user_email, method, payload, remove, set, status, token, update
+DELETE users/0.1/invitations/${R}   payload: status, token
+DELETE users/0.1/invitations/${S}   payload: status, token
+DELETE users/0.1/invitations/${_}   payload: status, token
+DELETE users/0.1/invitations/${c}   payload: status, token
+DELETE users/0.1/invitations/${d}   payload: status, token
+DELETE users/0.1/invitations/${g}   payload: status, token
+DELETE users/0.1/invitations/${i}   payload: status, token
+DELETE users/0.1/invitations/${l}   payload: status, token
+DELETE users/0.1/invitations/${n}   payload: status, token
+DELETE users/0.1/invitations/${o}   payload: status, token
+DELETE users/0.1/invitations/${r}   payload: status, token
+DELETE users/0.1/invitations/${s}   payload: status, token
+DELETE users/0.1/invitations/${t}   payload: status, token
+DELETE users/0.1/invitations/${u}   payload: status, token
+GET    users/0.1/marketing_mobile_numbers
+?      users/0.1/net_promoter_scores/   payload: comment, remove, score, set, source_id, source_type, update
+GET    users/0.1/net_promoter_scores/   payload: comment, remove, score, set, source_id, source_type, update
+GET    users/0.1/operating_areas
+?      users/0.1/payment_sharing/interest   payload: entity_type, order, ref, remove, result, set, update
+GET    users/0.1/payment_sharing/interest   payload: entity_type, order, ref, remove, result, set, update
+GET    users/0.1/payment_sharing/members   payload: entity_id, entity_type, is_spending_limit_active, payment_share_team_id, set, spending_limit_amount, spending_limit_duration, status, update, use_team_spend_limit
+PUT    users/0.1/payment_sharing/members   payload: entity_id, entity_type, is_spending_limit_active, payment_share_team_id, remove, set, spending_limit_amount, spending_limit_duration, status, update, use_team_spend_limit
+GET    users/0.1/payment_sharing/members/spend_amount
+GET    users/0.1/payment_sharing/teams   payload: deposit_method, is_spending_limit_active, member_spending_limit_amount, member_spending_limit_duration, payment_share_team_name, status
+PUT    users/0.1/payment_sharing/teams   payload: deposit_method, endpoint, is_spending_limit_active, member_spending_limit_amount, member_spending_limit_duration, method, payload, payment_share_team_name, set, status, update
+PUT    users/0.1/payment_sharing/teams/${i.id}   payload: is_spending_limit_active, member_spending_limit_amount, member_spending_limit_duration, payment_share_team_name, remove, status
+GET    users/0.1/payment_sharing/whitelist
+POST   users/0.1/pools   payload: order, ref, result
+PUT    users/0.1/portfolio_items_positions   payload: fetch, next_portfolio_item_id, portfolio_item_id, previous_portfolio_item_id, push, remove, set
+GET    users/0.1/portfolios/
+POST   users/0.1/profile_categories/   payload: endpoint, last_updated, method, name, payload, portfolio_items, position, remove, set, skills, update
+PUT    users/0.1/profile_categories/   payload: endpoint, last_updated, method, name, payload, portfolio_items, position, remove, skills
+DELETE users/0.1/profile_categories/?profile_categories[]=${i.id}   payload: name
+DELETE users/0.1/profile_categories/?profile_categories[]=${r.id}   payload: name
+GET    users/0.1/profiles   payload: description, endpoint, hourly_rate, set, skill_ids, tagline, update
+PUT    users/0.1/profiles   payload: description, endpoint, hourly_rate, method, payload, profile_id, profile_name, remove, set, skill_ids, status, tagline, update
+PUT    users/0.1/publications   payload: author, endpoint, method, payload, publication_id, publish_date, publisher, remove, set, summary, title, update
+DELETE users/0.1/publications/${r}   payload: author, document, publisher, ref, summary, title
+PUT    users/0.1/publications/${t.id}   payload: author, endpoint, method, payload, publication_id, publish_date, publisher, remove, summary, title
+POST   users/0.1/referral_invitations/   payload: email, emails, order, ref, referrer_username, remove, result, set, status, update
+GET    users/0.1/referral_records/
+GET    users/0.1/reputations
+DELETE users/0.1/search/saved_filters   payload: keyword, location, set, update
+GET    users/0.1/search/saved_filters
+POST   users/0.1/search/saved_filters   payload: keyword, location, set, update
+GET    users/0.1/self
+PUT    users/0.1/self   payload: endpoint, jobs, method, mfa, order, payload, preferred_method, ref, remove, result, set, skills, update
+PUT    users/0.1/self/   payload: currency_id, endpoint, enterprise, method, payload, source
+PUT    users/0.1/self/account   payload: mfa, order, preferred_method, ref, remove, result
+?      users/0.1/self/cover_image/
+POST   users/0.1/self/devices   payload: city, country, order, platform, ref, result, token
+?      users/0.1/self/documents   payload: expiry_date, fields, files, order, ref, remove, result, set, update
+GET    users/0.1/self/documents   payload: expiry_date, fields, files, order, ref, remove, result, set, update
+POST   users/0.1/self/enterprise_metadata_fields
+POST   users/0.1/self/equipment_items   payload: endpoint, items, method, name, payload, remove
+DELETE users/0.1/self/following   payload: endpoint, method, order, payload, ref, remove, result, set, status, update
+?      users/0.1/self/following/${n}   payload: document, order, ref, result, status
+?      users/0.1/self/jobs   payload: document, order, ref, result, skills
+PUT    users/0.1/self/jobs   payload: document, endpoint, jobs, method, order, payload, ref, remove, result, set, skills, update
+POST   users/0.1/self/marketing_mobile_number   payload: action, country_code, endpoint, enterprise, method, payload, source
+PUT    users/0.1/self/operating_areas   payload: endpoint, items, method, operating_area_ids, payload
+PUT    users/0.1/self/preferred_freelancer_program   payload: active, delta, order, ref, remove, result
+POST   users/0.1/self/preferred_freelancer_program/skills   payload: document, endpoint, method, order, payload, ref, remove, result, set, update
+DELETE users/0.1/self/preferred_freelancer_program/skills/${o}   payload: document, order, ref, result
+PUT    users/0.1/self/primary_currency   payload: endpoint, method, operating_area_ids, payload, user_id
+PUT    users/0.1/self/profile   payload: hourly_rate, method, order, profile_description, ref, remove, result, tagline
+PUT    users/0.1/self/profile_picture   payload: push, remove, set, width
+?      users/0.1/self/profile_picture/
+PUT    users/0.1/self/profile_picture/meta   payload: order, push, ref, remove, result, set, width
+?      users/0.1/self/recommended   payload: comment, date, order, ref, remove, result, set, update
+GET    users/0.1/self/recommended   payload: comment, date, order, ref, remove, result, set, update
+PUT    users/0.1/self/sales_tax_settings/   payload: country_code, endpoint, method, payload, remove, set, tax_number, tax_rate, tax_type, update
+DELETE users/0.1/self/sales_tax_settings/${e}/   payload: order, ref, result
+PUT    users/0.1/self/sales_tax_settings/${l.id}/   payload: country_code, endpoint, method, order, payload, ref, remove, result, set, tax_number, tax_rate, tax_type
+PUT    users/0.1/self/sales_tax_settings/${o.id}/   payload: country_code, endpoint, method, order, payload, ref, remove, result, set, tax_number, tax_rate, tax_type
+PUT    users/0.1/self/sales_tax_settings/${r.id}/   payload: country_code, endpoint, method, order, payload, ref, remove, result, set, tax_number, tax_rate, tax_type
+DELETE users/0.1/self/sales_tax_settings/${r}/   payload: order, ref, result
+DELETE users/0.1/self/sales_tax_settings/${u}/   payload: order, ref, result
+DELETE users/0.1/self/tax   payload: country_code, endpoint, method, name, number, order, payload, ref, remove, result, type, update, us_tax_subtype
+POST   users/0.1/self/tax   payload: country_code, endpoint, method, name, number, payload, remove, set, type, update, us_tax_subtype
+?      users/0.1/self/tax/${e}   payload: country_code, name, number, order, ref, result, type, us_tax_subtype
+?      users/0.1/self/tax/${l}   payload: country_code, name, number, order, ref, result, type, us_tax_subtype
+?      users/0.1/self/tax/${n}   payload: country_code, name, number, order, ref, result, type, us_tax_subtype
+?      users/0.1/self/tax/${r}   payload: country_code, name, number, order, ref, result, type, us_tax_subtype
+?      users/0.1/self/tax/${u}   payload: country_code, name, number, order, ref, result, type, us_tax_subtype
+DELETE users/0.1/self/tax/opt_out   payload: details, endpoint, method, order, payload, reason_id, ref, remove, result, update
+POST   users/0.1/self/tax/opt_out   payload: details, endpoint, method, order, payload, reason_id, ref, remove, result, set, update
+?      users/0.1/self/tax/opt_out/${i}   payload: details, order, reason_id, ref, result
+?      users/0.1/self/verifications   payload: remove, set, update
+GET    users/0.1/self/verifications   payload: remove, set, update
+GET    users/0.1/showcases/   payload: budget, currency, description, file_order, item_file, showcase_items, source, source_parent_id, source_type, status
+PUT    users/0.1/showcases/   payload: budget, cropped_item_file, currency, custom_skills, description, endpoint, file_order, is_cover_item, item_file, jobs, set, showcase_items, source, source_parent_id
+PUT    users/0.1/showcases/${M.id}   payload: budget, currency, description, hireme_count, jobs, likes, quality_score, seo_url, showcase_id, showcase_items, source, source_parent_id, source_type, status
+PUT    users/0.1/showcases/${P.id}   payload: budget, currency, description, hireme_count, jobs, likes, quality_score, seo_url, showcase_id, showcase_items, source, source_parent_id, source_type, status
+DELETE users/0.1/showcases/${R}   payload: display_name, families, filename, fileservice_file_id, is_category, name, parent_id, question, seo_name
+PUT    users/0.1/showcases/${_.id}   payload: budget, currency, description, hireme_count, jobs, likes, quality_score, seo_url, showcase_id, showcase_items, source, source_parent_id, source_type, status
+DELETE users/0.1/showcases/${_}   payload: display_name, families, filename, fileservice_file_id, is_category, name, parent_id, question, seo_name
+PUT    users/0.1/showcases/${a.id}   payload: budget, currency, description, hireme_count, jobs, likes, quality_score, seo_url, showcase_id, showcase_items, source, source_parent_id, source_type, status
+DELETE users/0.1/showcases/${a}   payload: display_name, families, filename, fileservice_file_id, is_category, name, parent_id, question, seo_name
+PUT    users/0.1/showcases/${c.id}   payload: budget, currency, description, hireme_count, jobs, likes, quality_score, seo_url, showcase_id, showcase_items, source, source_parent_id, source_type, status
+PUT    users/0.1/showcases/${d.id}   payload: budget, currency, description, hireme_count, jobs, likes, quality_score, seo_url, showcase_id, showcase_items, source, source_parent_id, source_type, status
+DELETE users/0.1/showcases/${d}   payload: display_name, families, filename, fileservice_file_id, is_category, name, parent_id, question, seo_name
+PUT    users/0.1/showcases/${e.id}   payload: budget, currency, description, hireme_count, jobs, likes, quality_score, seo_url, showcase_id, showcase_items, source, source_parent_id, source_type, status
+DELETE users/0.1/showcases/${e}   payload: display_name, families, filename, fileservice_file_id, is_category, name, parent_id, question, seo_name
+PUT    users/0.1/showcases/${f.id}   payload: budget, currency, description, hireme_count, jobs, likes, quality_score, seo_url, showcase_id, showcase_items, source, source_parent_id, source_type, status
+PUT    users/0.1/showcases/${i.id}   payload: budget, currency, description, hireme_count, jobs, likes, quality_score, seo_url, showcase_id, showcase_items, source, source_parent_id, source_type, status
+DELETE users/0.1/showcases/${i}   payload: display_name, families, filename, fileservice_file_id, is_category, name, parent_id, question, seo_name
+PUT    users/0.1/showcases/${l.id}   payload: budget, currency, description, hireme_count, jobs, likes, quality_score, seo_url, showcase_id, showcase_items, source, source_parent_id, source_type, status
+DELETE users/0.1/showcases/${m}   payload: display_name, families, filename, fileservice_file_id, is_category, name, parent_id, question, seo_name
+PUT    users/0.1/showcases/${n.id}   payload: budget, currency, description, hireme_count, jobs, likes, quality_score, seo_url, showcase_id, showcase_items, source, source_parent_id, source_type, status
+DELETE users/0.1/showcases/${n}   payload: display_name, families, filename, fileservice_file_id, is_category, name, parent_id, question, seo_name
+PUT    users/0.1/showcases/${o.id}   payload: budget, currency, description, hireme_count, jobs, likes, quality_score, seo_url, showcase_id, showcase_items, source, source_parent_id, source_type, status
+DELETE users/0.1/showcases/${o}   payload: display_name, families, filename, fileservice_file_id, is_category, name, parent_id, question, seo_name
+PUT    users/0.1/showcases/${s.id}   payload: budget, currency, description, hireme_count, jobs, likes, quality_score, seo_url, showcase_id, showcase_items, source, source_parent_id, source_type, status
+DELETE users/0.1/showcases/${s}   payload: display_name, families, filename, fileservice_file_id, is_category, name, parent_id, question, seo_name
+DELETE users/0.1/showcases/${t}   payload: display_name, families, filename, fileservice_file_id, is_category, name, parent_id, question, seo_name
+PUT    users/0.1/showcases/${u.id}   payload: budget, currency, description, hireme_count, jobs, likes, quality_score, seo_url, showcase_id, showcase_items, source, source_parent_id, source_type, status
+DELETE users/0.1/showcases/${u}   payload: display_name, families, filename, fileservice_file_id, is_category, name, parent_id, question, seo_name
+GET    users/0.1/tags/
+GET    users/0.1/team_invitations
+GET    users/0.1/teams
+GET    users/0.1/universities
+?      users/0.1/user_custom_email/   payload: cc_emails, context, context_id, data_name, email_subject, email_template, email_template_data_list, remove, set, update, value
+GET    users/0.1/user_enterprises
+GET    users/0.1/users   payload: hourly_rate, profile_description, tagline
+POST   users/0.1/users
+GET    users/0.1/users/${O}/experiences/   payload: city, company, country_code, description, end_date, set, start_date, update
+DELETE users/0.1/users/${P}/discover_collection_items   payload: context, description, endpoint, item_id, item_type, method, name, order, payload, remove, set, thumbnail, type, update
+?      users/0.1/users/${R}/notification_settings/   payload: delivery_type, metadata, remove, target, target_id, user_id, value
+PUT    users/0.1/users/${R}/notification_settings/   payload: delivery_type, metadata, remove, target, target_id, user_id, value
+?      users/0.1/users/${S}/notification_settings/   payload: delivery_type, metadata, remove, target, target_id, user_id, value
+PUT    users/0.1/users/${S}/notification_settings/   payload: delivery_type, metadata, remove, target, target_id, user_id, value
+DELETE users/0.1/users/${T}/discover_collection_items   payload: context, description, endpoint, item_id, item_type, method, name, order, payload, remove, set, thumbnail, type, update
+PUT    users/0.1/users/${_.id}?action=close_account   payload: allow_contact, closed, email, grants, remove, suspended, type
+PUT    users/0.1/users/${_[0]}/discover_collections/   payload: collection_type, description, endpoint, is_private, method, name, payload, remove, set, update
+?      users/0.1/users/${_}/settings/   payload: context, order, ref, remove, result, target, target_id, value
+PUT    users/0.1/users/${_}/settings/   payload: context, order, ref, remove, result, target, target_id, value
+DELETE users/0.1/users/${a}/discover_collection_items   payload: context, description, endpoint, item_id, item_type, method, name, order, payload, remove, set, thumbnail, type, update
+PUT    users/0.1/users/${a}/educations/   payload: country_code, degree, education_id, end_date, endpoint, method, payload, remove, school_id, set, start_date, update
+PUT    users/0.1/users/${c.id}?action=close_account   payload: allow_contact, closed, email, grants, remove, suspended, type
+DELETE users/0.1/users/${c}/discover_collection_items   payload: context, description, endpoint, item_id, item_type, method, name, order, payload, remove, set, thumbnail, type, update
+PUT    users/0.1/users/${d[0]}/discover_collections/   payload: collection_type, description, endpoint, is_private, method, name, payload, remove, set, update
+GET    users/0.1/users/${d}/experiences/   payload: city, company, country_code, description, end_date, set, start_date, update
+?      users/0.1/users/${e}/settings/   payload: context, order, ref, remove, result, target, target_id, value
+PUT    users/0.1/users/${e}/settings/   payload: context, order, ref, remove, result, target, target_id, value
+PUT    users/0.1/users/${f.id}?action=close_account   payload: allow_contact, closed, email, grants, remove, suspended, type
+DELETE users/0.1/users/${g}/discover_collection_items   payload: context, description, endpoint, item_id, item_type, method, name, order, payload, remove, set, thumbnail, type, update
+PUT    users/0.1/users/${i[0]}/discover_collections/   payload: collection_type, description, endpoint, is_private, method, name, payload, remove, set, update
+?      users/0.1/users/${i}/notification_settings/   payload: delivery_type, metadata, remove, target, target_id, user_id, value
+PUT    users/0.1/users/${i}/notification_settings/   payload: delivery_type, metadata, remove, target, target_id, user_id, value
+PUT    users/0.1/users/${l[0]}/discover_collections/   payload: collection_type, description, endpoint, is_private, method, name, payload, remove, set, update
+PUT    users/0.1/users/${m.id}?action=close_account   payload: allow_contact, closed, email, grants, remove, suspended, type
+PUT    users/0.1/users/${n}/certifications/   payload: awarded_date, certificate, certification_id, description, endpoint, method, organization, payload, remove, set, update
+DELETE users/0.1/users/${n}/discover_collection_items   payload: context, description, endpoint, item_id, item_type, method, name, order, payload, remove, set, thumbnail, type, update
+PUT    users/0.1/users/${n}/publications/   payload: author, endpoint, method, payload, publication_id, publish_date, publisher, remove, set, summary, title, update
+DELETE users/0.1/users/${o}/discover_collection_items   payload: context, description, endpoint, item_id, item_type, method, name, order, payload, remove, set, thumbnail, type, update
+PUT    users/0.1/users/${p.id}?action=close_account   payload: allow_contact, closed, email, grants, remove, suspended, type
+DELETE users/0.1/users/${r}/discover_collection_items   payload: context, description, endpoint, item_id, item_type, method, name, order, payload, remove, set, thumbnail, type, update
+DELETE users/0.1/users/${s}/discover_collection_items   payload: context, description, endpoint, item_id, item_type, method, name, order, payload, remove, set, thumbnail, type, update
+DELETE users/0.1/users/${u}/discover_collection_items   payload: context, description, endpoint, item_id, item_type, method, name, order, payload, remove, set, thumbnail, type, update
+PUT    users/0.1/users/${v.id}?action=close_account   payload: allow_contact, closed, email, grants, remove, suspended, type
+POST   users/0.1/users/check?recommend_name=true   payload: base_name, email, order, push, ref, remove, result, set, update, username
+GET    users/0.1/users/contract/download
+?      users/0.1/users/contract/initialize   payload: context_id, context_type, contract_type, custom_contract_id, remove, set, update
+GET    users/0.1/users/contracts
+GET    users/0.1/users/directory/
+POST   users/0.1/users/directory/   payload: custom_fields_filters, endpoint, params, push, remove, set, update
+GET    users/0.1/users/fees
+GET    users/0.1/verifications/${b}
+GET    users/0.1/verifications/${c}
+GET    users/0.1/verifications/${d}
+GET    users/0.1/verifications/${m}
+GET    users/0.1/verifications/${y}
+GET    users/0.1/video_verification_requests/${a[0]}
+?      users/0.1/violation_reports/   payload: additional_reason, comments, context_type, reason, remove, set, update, url, violator_user_id
+GET    users/financial-reporting.php   payload: remove, set, update, user_type_record, withdraw_type, withdraw_type_record
+POST   users/financial-reporting.php   payload: remove, set, update, user_type_record, withdraw_type, withdraw_type_record
+?      users/saveUserLocation.php   payload: latitude, longitude, ref, remove, result, set, timestamp, update
+PUT    verification/createVerificationRequest.php   payload: details, endpoint, method, payload, set, status, update
+POST   verification/deleteVerificationFile.php   payload: date, name, order, ref, result, source
+?      verification/getCorporateKyc.php
+GET    verification/getIDTypes.php
+GET    verification/getVerificationAddressDocumentTypes.php
+POST   verification/getVerificationFile.php   payload: date, name, order, ref, result, source
+PUT    verification/getVerificationRequest.php   payload: details, endpoint, method, payload, set, status, update
+PUT    verification/saveAddressDetails.php
+PUT    verification/saveIdDetails.php
+PUT    verification/saveKeycodeDetails.php
+?      verification/submitVerificationFile.php
+PUT    verification/submitVerificationRequest.php
+GET    whatsapp/required.php

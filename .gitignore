@@ -1,0 +1,25 @@
+# build output
+/bin/
+/dist/
+/coverage.out
+*.test
+
+go.work
+go.work.sum
+
+# logs and scratch
+*.log
+/tmp/
+
+# secrets and local session state
+.env
+.env.*
+session-*.json
+*.pem
+*.key
+
+# editors and OS
+.idea/
+.vscode/
+*.swp
+.DS_Store

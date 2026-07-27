@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: ["main", "feat/**", "fix/**"]
+  pull_request:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.2.2
+
+      - uses: actions/setup-go@v5.2.0
+        with:
+          go-version: "1.23.x"
+          cache: true
+
+      - name: Check formatting
+        run: |
+          unformatted="$(gofmt -l .)"
+          if [ -n "$unformatted" ]; then
+            echo "gofmt needed on:"
+            echo "$unformatted"
+            exit 1
+          fi
+
+      - name: Vet
+        run: go vet ./...
+
+      - name: Test
+        run: go test -race ./...
+
+      - name: Build
+        run: |
+          go build ./...
+          go build -o /tmp/freelancer ./cmd/freelancer
+          go build -o /tmp/freelancer-mcp ./cmd/freelancer-mcp
+
+      - name: Smoke check binaries
+        run: |
+          /tmp/freelancer version
+          /tmp/freelancer-mcp --version
+          # tools/list must answer without a session
+          printf '%s\n' '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' \
+            | /tmp/freelancer-mcp \
+            | grep -q freelancer_projects_search

@@ -1,0 +1,150 @@
+name: Auto tag and release
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: "Version bump to apply"
+        required: true
+        default: auto
+        type: choice
+        options: [auto, patch, minor, major]
+
+permissions:
+  contents: write
+
+# Two merges landing seconds apart both computed the same next tag and one tag
+# push was rejected, so runs on main are serialised.
+concurrency:
+  group: autotag-main
+  cancel-in-progress: false
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.next.outputs.tag }}
+      released: ${{ steps.next.outputs.released }}
+    steps:
+      - uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-go@v5.2.0
+        with:
+          go-version: "1.23.x"
+          cache: true
+
+      - name: Test before tagging
+        run: go test ./...
+
+      - name: Compute next version
+        id: next
+        env:
+          FORCE_BUMP: ${{ github.event.inputs.bump }}
+        run: |
+          set -euo pipefail
+
+          # Pick up tags pushed by a run that finished after this checkout.
+          git fetch --tags --force --quiet
+
+          latest="$(git tag --list 'v*' --sort=-v:refname | head -n 1)"
+          if [ -z "$latest" ]; then
+            range=""
+            base="v0.0.0"
+          else
+            range="${latest}..HEAD"
+            base="$latest"
+          fi
+          echo "latest tag: ${base}"
+
+          if [ -n "$latest" ] && git describe --exact-match --tags HEAD >/dev/null 2>&1; then
+            echo "HEAD is already tagged, nothing to release"
+            echo "released=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if [ -n "$range" ]; then
+            subjects="$(git log "$range" --pretty=%s)"
+            bodies="$(git log "$range" --pretty=%B)"
+          else
+            subjects="$(git log --pretty=%s)"
+            bodies="$(git log --pretty=%B)"
+          fi
+
+          if [ -z "$subjects" ]; then
+            echo "no new commits"
+            echo "released=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          bump="none"
+          # Conventional commits: feat -> minor, fix/perf/refactor/revert -> patch,
+          # "!" in the type or a BREAKING CHANGE footer -> major.
+          if echo "$subjects" | grep -qE '^[a-z]+(\([^)]*\))?!:' || echo "$bodies" | grep -q 'BREAKING CHANGE'; then
+            bump="major"
+          elif echo "$subjects" | grep -qE '^feat(\([^)]*\))?:'; then
+            bump="minor"
+          elif echo "$subjects" | grep -qE '^(fix|perf|refactor|revert)(\([^)]*\))?:'; then
+            bump="patch"
+          fi
+
+          if [ -n "${FORCE_BUMP:-}" ] && [ "${FORCE_BUMP}" != "auto" ]; then
+            bump="${FORCE_BUMP}"
+          fi
+
+          if [ "$bump" = "none" ]; then
+            echo "only chore/docs/test/ci commits since ${base}, skipping release"
+            echo "released=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          version="${base#v}"
+          major="${version%%.*}"
+          rest="${version#*.}"
+          minor="${rest%%.*}"
+          patch="${rest#*.}"
+          patch="${patch%%-*}"
+
+          case "$bump" in
+            major) major=$((major + 1)); minor=0; patch=0 ;;
+            minor) minor=$((minor + 1)); patch=0 ;;
+            patch) patch=$((patch + 1)) ;;
+          esac
+
+          # Skip over versions that already exist, which can happen when a tag
+          # was pushed manually between runs.
+          while git rev-parse -q --verify "refs/tags/v${major}.${minor}.${patch}" >/dev/null; do
+            patch=$((patch + 1))
+          done
+
+          tag="v${major}.${minor}.${patch}"
+          echo "bump=${bump} -> ${tag}"
+          echo "tag=${tag}" >> "$GITHUB_OUTPUT"
+          echo "released=true" >> "$GITHUB_OUTPUT"
+
+      - name: Create tag
+        if: steps.next.outputs.released == 'true'
+        env:
+          TAG: ${{ steps.next.outputs.tag }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "$TAG" -m "$TAG"
+          if ! git push origin "$TAG"; then
+            echo "::error::tag $TAG already exists on the remote; re-run this workflow to pick the next version"
+            exit 1
+          fi
+
+  release:
+    needs: tag
+    if: needs.tag.outputs.released == 'true'
+    uses: ./.github/workflows/release.yml
+    with:
+      tag: ${{ needs.tag.outputs.tag }}
+    permissions:
+      contents: write
+    secrets: inherit
