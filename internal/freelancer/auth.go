@@ -82,7 +82,7 @@ func (c *Client) Login(ctx context.Context, user, password string, opts LoginOpt
 	query.Set("new_pools", "true")
 
 	var out LoginResult
-	_, err = c.DoJSON(ctx, Request{
+	resp, err := c.DoJSON(ctx, Request{
 		Method:  http.MethodPost,
 		Path:    "/ajax-api/auth/login.php",
 		Base:    c.cfg.WebBase,
@@ -96,7 +96,14 @@ func (c *Client) Login(ctx context.Context, user, password string, opts LoginOpt
 		return nil, fmt.Errorf("login: %w", err)
 	}
 	if out.Token == "" || out.UserID == 0 {
-		return nil, errors.New("login: response carried no token")
+		body := ""
+		if resp != nil {
+			body = truncate(string(resp.Body), 300)
+		}
+		if body == "" {
+			return nil, errors.New("login: response carried no token")
+		}
+		return nil, fmt.Errorf("login: response carried no token: %s", body)
 	}
 
 	c.mu.Lock()
