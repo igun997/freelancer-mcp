@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/igun997/freelancer-mcp/internal/session"
 )
@@ -336,5 +337,161 @@ func TestParseCVEntryKind(t *testing.T) {
 	}
 	if len(CVExperience.RequiredFields()) == 0 {
 		t.Error("experience should document required fields")
+	}
+}
+
+func TestParseCVDateAnchorsMidMonth(t *testing.T) {
+	// Freelancer reinterprets timestamps in GMT+7, so a first-of-month value
+	// reads back as the previous month. Mid-month anchoring survives the shift.
+	stamp, err := ParseCVDate("2018-01")
+	if err != nil {
+		t.Fatalf("parse: %v", err)
+	}
+	got := time.Unix(stamp, 0).UTC()
+	if got.Year() != 2018 || got.Month() != time.January || got.Day() != 15 {
+		t.Errorf("2018-01 anchored at %s", got)
+	}
+	shifted := time.Unix(stamp, 0).In(time.FixedZone("GMT+7", 7*3600))
+	if shifted.Month() != time.January {
+		t.Errorf("GMT+7 view slipped to %s", shifted.Month())
+	}
+	if _, err := ParseCVDate("2018-01-20"); err != nil {
+		t.Errorf("YYYY-MM-DD should parse: %v", err)
+	}
+	if stamp, err := ParseCVDate("1514764800"); err != nil || stamp != 1514764800 {
+		t.Errorf("epoch passthrough = %d, %v", stamp, err)
+	}
+	if _, err := ParseCVDate("last summer"); err == nil {
+		t.Error("expected an error for unparseable input")
+	}
+}
+
+func TestNormalizeCVDatesTreatsPresentAsOpenEnded(t *testing.T) {
+	out, err := normalizeCVDates(map[string]any{
+		"title":      "Founder",
+		"start_date": "2018-01",
+		"end_date":   "present",
+	})
+	if err != nil {
+		t.Fatalf("normalize: %v", err)
+	}
+	if out["end_date"] != nil {
+		t.Errorf("end_date = %v, want nil", out["end_date"])
+	}
+	if _, ok := out["start_date"].(int64); !ok {
+		t.Errorf("start_date = %T, want int64", out["start_date"])
+	}
+	if _, err := normalizeCVDates(map[string]any{"start_date": "nope"}); err == nil {
+		t.Error("expected an error for an unparseable date")
+	}
+}
+
+func TestAddOngoingExperienceReopensTheEntry(t *testing.T) {
+	// A create without end_date answers 500 but still inserts a row, so the
+	// client creates the role closed and clears end_date with a follow-up PUT.
+	var posted, put map[string]any
+	mux := http.NewServeMux()
+	mux.HandleFunc("/api/users/0.1/experiences", func(w http.ResponseWriter, r *http.Request) {
+		_ = json.NewDecoder(r.Body).Decode(&posted)
+		_, _ = w.Write([]byte(`{"status":"success","result":{"experience":{"id":42}}}`))
+	})
+	mux.HandleFunc("/api/users/0.1/experiences/42", func(w http.ResponseWriter, r *http.Request) {
+		_ = json.NewDecoder(r.Body).Decode(&put)
+		_, _ = w.Write([]byte(`{"status":"success","result":{"experience":{"id":42,"end_date":null}}}`))
+	})
+
+	client, _ := testClient(t, mux)
+	client.mu.Lock()
+	client.sess.UserID = 1
+	client.sess.Token = "t"
+	client.mu.Unlock()
+
+	_, err := client.AddCVEntry(context.Background(), CVExperience, map[string]any{
+		"title":       "Founder",
+		"company":     "CDS",
+		"description": "keeps its description",
+		"start_date":  "2018-01",
+		"end_date":    "present",
+	})
+	if err != nil {
+		t.Fatalf("add: %v", err)
+	}
+	if posted["end_date"] == nil {
+		t.Error("create must carry a placeholder end_date, otherwise the row loses its description")
+	}
+	if posted["description"] != "keeps its description" {
+		t.Errorf("description not sent: %v", posted["description"])
+	}
+	if put == nil {
+		t.Fatal("expected a follow-up PUT to clear end_date")
+	}
+	if put["end_date"] != nil {
+		t.Errorf("PUT end_date = %v, want nil", put["end_date"])
+	}
+	if put["title"] != "Founder" {
+		t.Errorf("PUT must resend every field, got %v", put)
+	}
+
+	if _, err := client.AddCVEntry(context.Background(), CVExperience, map[string]any{"title": "x"}); err == nil {
+		t.Error("expected an error when start_date is missing")
+	}
+}
+
+func TestSchoolsRequireCountryAndFilterByName(t *testing.T) {
+	mux := http.NewServeMux()
+	mux.HandleFunc("/api/users/0.1/universities", func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Query().Get("country_codes[]") != "ID" {
+			t.Errorf("country_codes[] = %q", r.URL.Query().Get("country_codes[]"))
+		}
+		_, _ = w.Write([]byte(`{"status":"success","result":{"universities":[
+			{"id":3997,"name":"Universitas Komputer Indonesia Bandung","country_code":"ID"},
+			{"id":1,"name":"Universitas Gadjah Mada","country_code":"ID"}]}}`))
+	})
+
+	client, _ := testClient(t, mux)
+	schools, err := client.Schools(context.Background(), "id", "komputer")
+	if err != nil {
+		t.Fatalf("schools: %v", err)
+	}
+	if len(schools) != 1 || schools[0].ID != 3997 {
+		t.Fatalf("unexpected matches %+v", schools)
+	}
+	if _, err := client.Schools(context.Background(), "", ""); err == nil {
+		t.Error("expected an error without a country code")
+	}
+}
+
+func TestThreadActionSendsFormFields(t *testing.T) {
+	// A JSON body is rejected with "Missing required parameter 'action'".
+	var contentType, body string
+	mux := http.NewServeMux()
+	mux.HandleFunc("/api/messages/0.1/threads/", func(w http.ResponseWriter, r *http.Request) {
+		contentType = r.Header.Get("content-type")
+		buf := make([]byte, r.ContentLength)
+		_, _ = r.Body.Read(buf)
+		body = string(buf)
+		_, _ = w.Write([]byte(`{"status":"success"}`))
+	})
+
+	client, _ := testClient(t, mux)
+	client.mu.Lock()
+	client.sess.UserID = 1
+	client.sess.Token = "t"
+	client.mu.Unlock()
+
+	if _, err := client.ThreadAction(context.Background(), []int64{12, 13}, ThreadActionStar); err != nil {
+		t.Fatalf("thread action: %v", err)
+	}
+	if !strings.HasPrefix(contentType, "application/x-www-form-urlencoded") {
+		t.Errorf("content type = %q", contentType)
+	}
+	if !strings.Contains(body, "action=star") {
+		t.Errorf("body %q missing the action", body)
+	}
+	if !strings.Contains(body, "threads%5B%5D=12") || !strings.Contains(body, "threads%5B%5D=13") {
+		t.Errorf("body %q missing threads[] entries", body)
+	}
+	if _, err := client.ThreadAction(context.Background(), nil, ThreadActionRead); err == nil {
+		t.Error("expected an error without thread ids")
 	}
 }

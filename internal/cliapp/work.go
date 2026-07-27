@@ -345,7 +345,7 @@ func runMessages(ctx context.Context, e *env, args []string) error {
 	case "read":
 		return messagesAction(ctx, e, args, freelancer.ThreadActionRead)
 	case "action":
-		return messagesActionFlag(ctx, e, args)
+		return messagesAction(ctx, e, args, "")
 	case "new":
 		return messagesNew(ctx, e, args)
 	case "attachments":
@@ -436,12 +436,24 @@ func messagesSend(ctx context.Context, e *env, args []string) error {
 	return writeRaw(e, raw)
 }
 
-func messagesAction(ctx context.Context, e *env, args []string, action string) error {
-	fs := newFlagSet(e, "messages "+action)
+// messagesAction handles both `messages read` (fixed action) and
+// `messages action --action star`, so the flag set must always accept --action:
+// parsing it in a separate pass and re-parsing the same args broke every
+// non-read action.
+func messagesAction(ctx context.Context, e *env, args []string, fixed string) error {
+	name := "action"
+	if fixed != "" {
+		name = fixed
+	}
+	fs := newFlagSet(e, "messages "+name)
 	threads := fs.String("threads", "", "thread ids")
 	thread := fs.Int64("thread", 0, "single thread id")
+	action := fs.String("action", fixed, strings.Join(freelancer.ThreadActions(), ", "))
 	if err := parseFlags(fs, args); err != nil {
 		return usageOrHelp(err)
+	}
+	if fixed != "" {
+		*action = fixed
 	}
 	ids, err := intList(*threads)
 	if err != nil {
@@ -450,38 +462,24 @@ func messagesAction(ctx context.Context, e *env, args []string, action string) e
 	if *thread != 0 {
 		ids = append(ids, *thread)
 	}
-	if len(ids) == 0 {
-		fmt.Fprintf(e.stderr, "usage: freelancer messages %s --thread THREAD_ID\n", action)
+	if len(ids) == 0 || *action == "" {
+		fmt.Fprintf(e.stderr, "usage: freelancer messages action --action <%s> --thread THREAD_ID\n",
+			strings.Join(freelancer.ThreadActions(), "|"))
 		return ErrUsage
 	}
 	client, _, err := e.newClient()
 	if err != nil {
 		return err
 	}
-	raw, err := client.ThreadAction(ctx, ids, action)
+	raw, err := client.ThreadAction(ctx, ids, *action)
 	if err != nil {
 		return err
 	}
 	if raw == nil {
-		fmt.Fprintf(e.stdout, "%s applied to %d thread(s)\n", action, len(ids))
+		fmt.Fprintf(e.stdout, "%s applied to %d thread(s)\n", *action, len(ids))
 		return nil
 	}
 	return writeRaw(e, raw)
-}
-
-func messagesActionFlag(ctx context.Context, e *env, args []string) error {
-	fs := newFlagSet(e, "messages action")
-	action := fs.String("action", "", strings.Join(freelancer.ThreadActions(), ", "))
-	if err := parseFlags(fs, args); err != nil {
-		return usageOrHelp(err)
-	}
-	if *action == "" {
-		fmt.Fprintf(e.stderr, "usage: freelancer messages action --action <%s> --thread ID\n",
-			strings.Join(freelancer.ThreadActions(), "|"))
-		return ErrUsage
-	}
-	rest := args
-	return messagesAction(ctx, e, rest, *action)
 }
 
 func messagesNew(ctx context.Context, e *env, args []string) error {

@@ -7,7 +7,7 @@ Two binaries:
 | Binary | Purpose |
 | --- | --- |
 | `freelancer` | CLI for humans and scripts |
-| `freelancer-mcp` | Model Context Protocol server on stdio for AI agents (43 tools) |
+| `freelancer-mcp` | Model Context Protocol server on stdio for AI agents (44 tools) |
 
 Works on freelancer.com and its regional domains (freelancer.co.id, freelancer.com.au, …) — they share one account system and one API.
 
@@ -79,8 +79,12 @@ freelancer profile skills                                  # current skills
 freelancer profile skills --add 248                        # Golang
 freelancer profile skills --set 3,248,305                  # replace the list
 freelancer profile avatar --file me.png --width 400 --height 400
+freelancer profile cv --section experience --list
 freelancer profile cv --section experience \
-  --add '{"title":"Backend Engineer","company":"Acme","start_date":1609459200}'
+  --add '{"title":"Backend Engineer","company":"Acme","start_date":"2021-03","end_date":"present"}'
+freelancer profile schools --country ID --query komputer     # school_id for education entries
+freelancer profile cv --section education \
+  --add '{"school_id":3997,"country_code":"ID","degree":"Bachelor of Information Systems","start_date":"2015-09","end_date":"2019-09"}'
 freelancer profile role employer                            # switch active role
 freelancer profile currency --id 1                          # USD
 freelancer profile portfolio
@@ -152,7 +156,7 @@ Client config, e.g. Claude Desktop or any MCP-capable agent:
 
 Tool groups:
 
-- **Account** — `freelancer_whoami`, `freelancer_profile_get`, `freelancer_profile_update`, `freelancer_profile_skills`, `freelancer_profile_cv`, `freelancer_profile_picture_upload`, `freelancer_portfolio_list`, `freelancer_account_settings`, `freelancer_reputation`, `freelancer_reviews`, `freelancer_currencies`, `freelancer_skills_search`, `freelancer_freelancers_search`
+- **Account** — `freelancer_whoami`, `freelancer_profile_get`, `freelancer_profile_update`, `freelancer_profile_skills`, `freelancer_profile_cv`, `freelancer_schools_search`, `freelancer_profile_picture_upload`, `freelancer_portfolio_list`, `freelancer_account_settings`, `freelancer_reputation`, `freelancer_reviews`, `freelancer_currencies`, `freelancer_skills_search`, `freelancer_freelancers_search`
 - **Work** — `freelancer_projects_search`, `freelancer_project_get`, `freelancer_project_bids`, `freelancer_projects_mine`, `freelancer_project_post`, `freelancer_bids_list`, `freelancer_bid_quota`, `freelancer_bid_place`, `freelancer_bid_update`, `freelancer_bid_action`, `freelancer_manage_bids`
 - **Messaging** — `freelancer_threads_list`, `freelancer_messages_list`, `freelancer_messages_search`, `freelancer_message_send`, `freelancer_thread_action`, `freelancer_thread_new`, `freelancer_thread_attachments`, `freelancer_notifications`, `freelancer_saved_searches`
 - **Money** — `freelancer_balances`, `freelancer_invoices`, `freelancer_payout_accounts`, `freelancer_membership`, `freelancer_milestones_list`, `freelancer_milestone_requests_list`, `freelancer_milestone_request_create`, `freelancer_milestone_request_action`, `freelancer_milestone_release`
@@ -164,6 +168,7 @@ Actions that cost money, spend quota, or cannot be undone require `confirm=true`
 
 - **Bid quota.** Free accounts get a small monthly allowance (`freelancer quota`). Featured or high-value projects also require 5+ reviews, a paid membership, or identity verification, and the API says so plainly when it refuses.
 - **Profile writes.** `PUT /users/0.1/self/profile` accepts exactly three fields: `tagline`, `profile_description`, `hourly_rate`. Other account settings live behind separate endpoints (`self/account`, `self/primary_currency`, `self/operating_areas`).
+- **CV dates.** Freelancer stores epoch seconds but reinterprets them in GMT+7, so a first-of-month date renders as the previous month. Pass `"YYYY-MM"`, `"YYYY-MM-DD"`, or `"present"` and the client anchors mid-month for you. Education entries need a `school_id` from `freelancer profile schools`; a plain school name is dropped by the API.
 - **Cold messages.** Freelancer rejects new threads to users with no shared project context.
 - **Realtime.** The web app uses a SockJS channel at `notifications.freelancer.com`; this client polls instead.
 

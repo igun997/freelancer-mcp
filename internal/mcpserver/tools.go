@@ -171,12 +171,15 @@ func accountTools() []tool {
 		{
 			Name: "freelancer_profile_cv",
 			Description: "Manage CV records. section: experience, education, publication, certification. " +
-				"action: add (default), update, delete. Required fields per section are reported when the payload is incomplete.",
+				"action: list, add (default), update, delete. Dates accept \"YYYY-MM\", \"YYYY-MM-DD\", epoch seconds, " +
+				"or \"present\" for an ongoing role. Education needs school_id from freelancer_schools_search: a plain " +
+				"school name is accepted and then dropped by the API.",
 			Schema: obj(map[string]any{
 				"section": str("experience, education, publication, or certification"),
-				"action":  str("add, update, or delete"),
+				"action":  str("list, add, update, or delete"),
 				"id":      num("entry id for update or delete"),
-				"payload": map[string]any{"type": "object", "description": "entry fields, e.g. {title, company, start_date}"},
+				"user_id": num("user id for action=list, omit for yourself"),
+				"payload": map[string]any{"type": "object", "description": "entry fields, e.g. {title, company, start_date, end_date}"},
 			}, "section"),
 			Handler: func(ctx context.Context, s *Server, args map[string]any) (any, error) {
 				kind, err := freelancer.ParseCVEntryKind(argString(args, "section"))
@@ -190,6 +193,9 @@ func accountTools() []tool {
 				id := argInt64(args, "id", 0)
 				payload, _ := args["payload"].(map[string]any)
 				switch action {
+				case "list":
+					data, err := s.client.ListCVEntries(ctx, kind, argInt64(args, "user_id", 0), 50)
+					return rawOrNull(data), err
 				case "add":
 					if len(payload) == 0 {
 						return nil, fmt.Errorf("%s needs %v", kind, kind.RequiredFields())
@@ -211,8 +217,28 @@ func accountTools() []tool {
 					}
 					return map[string]any{"section": string(kind), "id": id, "deleted": true}, nil
 				default:
-					return nil, fmt.Errorf("unknown action %q: use add, update, or delete", action)
+					return nil, fmt.Errorf("unknown action %q: use list, add, update, or delete", action)
 				}
+			},
+		},
+		{
+			Name:        "freelancer_schools_search",
+			Description: "Find the school_id an education record needs. Filter universities by country code and name.",
+			Schema: obj(map[string]any{
+				"country": str("country code, e.g. ID or US"),
+				"query":   str("name substring"),
+				"limit":   num("maximum rows, default 20"),
+			}, "country"),
+			Handler: func(ctx context.Context, s *Server, args map[string]any) (any, error) {
+				schools, err := s.client.Schools(ctx, argString(args, "country"), argString(args, "query"))
+				if err != nil {
+					return nil, err
+				}
+				limit := argInt(args, "limit", 20)
+				if limit > 0 && len(schools) > limit {
+					schools = schools[:limit]
+				}
+				return schools, nil
 			},
 		},
 		{

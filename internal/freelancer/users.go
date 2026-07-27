@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
+	"time"
 )
 
 // Self is the trimmed identity returned by GET /users/0.1/self.
@@ -99,14 +101,6 @@ func (c *Client) Self(ctx context.Context, details ...string) (*Self, error) {
 		return nil, err
 	}
 	return &out, nil
-}
-
-// SelfRaw returns the raw self payload with caller-chosen detail flags.
-func (c *Client) SelfRaw(ctx context.Context, query url.Values) (json.RawMessage, error) {
-	if err := c.requireSession(); err != nil {
-		return nil, err
-	}
-	return c.API(ctx, http.MethodGet, "/users/0.1/self/", query, nil)
 }
 
 // Users looks up users by id with the detail flags the web app uses.
@@ -377,7 +371,8 @@ func (k CVEntryKind) RequiredFields() []string {
 	case CVExperience:
 		return []string{"title", "company", "start_date"}
 	case CVEducation:
-		return []string{"school_id or other_school_name", "country_code", "degree", "start_date"}
+		// other_school_name is accepted and then dropped: only school_id sticks.
+		return []string{"school_id (see Schools)", "country_code", "degree", "start_date"}
 	case CVPublication:
 		return []string{"title"}
 	case CVCertification:
@@ -386,8 +381,26 @@ func (k CVEntryKind) RequiredFields() []string {
 	return nil
 }
 
+// ListCVEntries reads one CV collection for a user. Zero means "me". The
+// endpoint pages small by default, so limit is always sent.
+func (c *Client) ListCVEntries(ctx context.Context, kind CVEntryKind, userID int64, limit int) (json.RawMessage, error) {
+	if userID == 0 {
+		if err := c.requireSession(); err != nil {
+			return nil, err
+		}
+		userID = c.UserID()
+	}
+	query := url.Values{"limit": {strconv.Itoa(limitOr(limit, 50))}}
+	return c.API(ctx, http.MethodGet,
+		fmt.Sprintf("/users/0.1/users/%d/%s/", userID, kind), query, nil)
+}
+
 // AddCVEntry creates a CV record (experience, education, publication,
 // certification) on the authenticated profile.
+//
+// Experiences are special. A create without end_date answers HTTP 500 but still
+// inserts a row, dropping the description, so an ongoing role is created closed
+// and then reopened with a follow-up PUT that clears end_date.
 func (c *Client) AddCVEntry(ctx context.Context, kind CVEntryKind, payload map[string]any) (json.RawMessage, error) {
 	if err := c.requireSession(); err != nil {
 		return nil, err
@@ -395,15 +408,144 @@ func (c *Client) AddCVEntry(ctx context.Context, kind CVEntryKind, payload map[s
 	if len(payload) == 0 {
 		return nil, fmt.Errorf("empty payload: %s needs %v", kind, kind.RequiredFields())
 	}
-	return c.API(ctx, http.MethodPost, "/users/0.1/"+string(kind), nil, payload)
+	payload, err := normalizeCVDates(payload)
+	if err != nil {
+		return nil, err
+	}
+	if kind != CVExperience {
+		return c.API(ctx, http.MethodPost, "/users/0.1/"+string(kind), nil, payload)
+	}
+
+	if payload["start_date"] == nil {
+		return nil, fmt.Errorf("experiences need start_date (YYYY-MM or epoch seconds)")
+	}
+	ongoing := payload["end_date"] == nil
+	if ongoing {
+		// Any end_date works as a placeholder; the follow-up PUT clears it.
+		payload["end_date"] = time.Now().Unix()
+	}
+	raw, err := c.API(ctx, http.MethodPost, "/users/0.1/"+string(kind), nil, payload)
+	if err != nil {
+		return nil, err
+	}
+	if !ongoing {
+		return raw, nil
+	}
+	var created struct {
+		Experience struct {
+			ID int64 `json:"id"`
+		} `json:"experience"`
+	}
+	if err := json.Unmarshal(raw, &created); err != nil || created.Experience.ID == 0 {
+		return raw, fmt.Errorf("experience created but its id is unknown, so it still shows an end date: %s", raw)
+	}
+	payload["end_date"] = nil
+	return c.UpdateCVEntry(ctx, kind, created.Experience.ID, payload)
 }
 
-// UpdateCVEntry edits one CV record.
+// UpdateCVEntry edits one CV record. Freelancer treats the payload as a full
+// replacement, so send every field you want to keep.
 func (c *Client) UpdateCVEntry(ctx context.Context, kind CVEntryKind, id int64, payload map[string]any) (json.RawMessage, error) {
 	if err := c.requireSession(); err != nil {
 		return nil, err
 	}
+	payload, err := normalizeCVDates(payload)
+	if err != nil {
+		return nil, err
+	}
 	return c.API(ctx, http.MethodPut, fmt.Sprintf("/users/0.1/%s/%d", kind, id), nil, payload)
+}
+
+// cvDateFields are the CV payload keys Freelancer reads as epoch seconds.
+var cvDateFields = []string{"start_date", "end_date", "awarded_date", "publish_date"}
+
+// normalizeCVDates accepts "YYYY-MM" and "YYYY-MM-DD" strings alongside raw
+// epoch seconds. Dates are anchored to midday on the 15th because Freelancer
+// reinterprets timestamps in GMT+7: a first-of-month value reads back as the
+// previous month.
+func normalizeCVDates(payload map[string]any) (map[string]any, error) {
+	out := make(map[string]any, len(payload))
+	for key, value := range payload {
+		out[key] = value
+	}
+	for _, field := range cvDateFields {
+		value, ok := out[field]
+		if !ok || value == nil {
+			continue
+		}
+		text, ok := value.(string)
+		if !ok {
+			continue
+		}
+		if text == "" || strings.EqualFold(text, "present") || strings.EqualFold(text, "current") {
+			out[field] = nil
+			continue
+		}
+		stamp, err := ParseCVDate(text)
+		if err != nil {
+			return nil, fmt.Errorf("%s: %w", field, err)
+		}
+		out[field] = stamp
+	}
+	return out, nil
+}
+
+// ParseCVDate turns "2018-01" or "2018-01-20" into epoch seconds anchored at
+// midday on the 15th of that month, which survives Freelancer's GMT+7 shift.
+func ParseCVDate(value string) (int64, error) {
+	value = strings.TrimSpace(value)
+	for _, layout := range []string{"2006-01", "2006-01-02", "2006/01", "01/2006"} {
+		parsed, err := time.Parse(layout, value)
+		if err != nil {
+			continue
+		}
+		return time.Date(parsed.Year(), parsed.Month(), 15, 12, 0, 0, 0, time.UTC).Unix(), nil
+	}
+	if stamp, err := strconv.ParseInt(value, 10, 64); err == nil {
+		return stamp, nil
+	}
+	return 0, fmt.Errorf("cannot read %q as a date: use YYYY-MM, YYYY-MM-DD, epoch seconds, or \"present\"", value)
+}
+
+// School is a university entry Freelancer accepts in education records.
+type School struct {
+	ID          int64  `json:"id"`
+	Name        string `json:"name"`
+	CountryCode string `json:"country_code"`
+	StateCode   string `json:"state_code"`
+}
+
+// Schools lists universities for one country, optionally filtered by name.
+// Education records need a school_id: other_school_name is accepted by the API
+// and silently dropped, which leaves a nameless entry on the profile.
+func (c *Client) Schools(ctx context.Context, countryCode, query string) ([]School, error) {
+	if countryCode == "" {
+		return nil, errors.New("country code is required, e.g. ID or US")
+	}
+	values := url.Values{}
+	values.Add("country_codes[]", strings.ToUpper(countryCode))
+	values.Set("limit", "5000")
+	var out struct {
+		Universities []School `json:"universities"`
+	}
+	if _, err := c.DoJSON(ctx, Request{
+		Method: http.MethodGet,
+		Path:   "/users/0.1/universities",
+		Query:  values,
+	}, &out); err != nil {
+		return nil, err
+	}
+	needle := strings.ToLower(strings.TrimSpace(query))
+	if needle == "" {
+		return out.Universities, nil
+	}
+	matched := make([]School, 0, 8)
+	for _, school := range out.Universities {
+		if strings.Contains(strings.ToLower(school.Name), needle) {
+			matched = append(matched, school)
+		}
+	}
+	return matched, nil
 }
 
 // DeleteCVEntry removes one CV record.

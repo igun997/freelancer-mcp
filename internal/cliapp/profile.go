@@ -30,13 +30,15 @@ func runProfile(ctx context.Context, e *env, args []string) error {
 		return profileCurrency(ctx, e, args)
 	case "cv":
 		return profileCV(ctx, e, args)
+	case "schools":
+		return profileSchools(ctx, e, args)
 	case "portfolio":
 		return profilePortfolio(ctx, e, args)
 	case "reputation":
 		return profileReputation(ctx, e, args)
 	default:
 		fmt.Fprintf(e.stderr, "unknown profile subcommand %q\n", sub)
-		fmt.Fprintln(e.stderr, "available: show, update, skills, avatar, role, currency, cv, portfolio, reputation")
+		fmt.Fprintln(e.stderr, "available: show, update, skills, avatar, role, currency, cv, schools, portfolio, reputation")
 		return ErrUsage
 	}
 }
@@ -267,12 +269,16 @@ func profileCurrency(ctx context.Context, e *env, args []string) error {
 func profileCV(ctx context.Context, e *env, args []string) error {
 	fs := newFlagSet(e, "profile cv")
 	section := fs.String("section", "", "experience, education, publication, or certification")
+	list := fs.Bool("list", false, "list existing entries in this section")
+	user := fs.Int64("user", 0, "user id for --list (default: yourself)")
 	add := fs.String("add", "", "JSON payload of the new entry")
 	update := fs.Int64("update", 0, "entry id to update (with --add payload)")
 	remove := fs.Int64("delete", 0, "entry id to delete")
 	fs.Usage = func() {
-		fmt.Fprintln(e.stderr, `usage: freelancer profile cv --section experience --add '{"title":"Backend Engineer","company":"Acme","start_date":1609459200}'`)
+		fmt.Fprintln(e.stderr, "usage: freelancer profile cv --section experience --list")
+		fmt.Fprintln(e.stderr, `       freelancer profile cv --section experience --add '{"title":"Backend Engineer","company":"Acme","start_date":"2021-03","end_date":"present"}'`)
 		fmt.Fprintln(e.stderr, "       freelancer profile cv --section education --delete 123")
+		fmt.Fprintln(e.stderr, "\ndates accept YYYY-MM, YYYY-MM-DD, epoch seconds, or \"present\" for an ongoing role")
 		fs.PrintDefaults()
 	}
 	if err := parseFlags(fs, args); err != nil {
@@ -287,6 +293,12 @@ func profileCV(ctx context.Context, e *env, args []string) error {
 		return err
 	}
 	switch {
+	case *list:
+		raw, err := client.ListCVEntries(ctx, kind, *user, 50)
+		if err != nil {
+			return err
+		}
+		return writeRaw(e, raw)
 	case *remove != 0:
 		if err := client.DeleteCVEntry(ctx, kind, *remove); err != nil {
 			return err
@@ -315,6 +327,40 @@ func profileCV(ctx context.Context, e *env, args []string) error {
 		fs.Usage()
 		return ErrUsage
 	}
+}
+
+func profileSchools(ctx context.Context, e *env, args []string) error {
+	fs := newFlagSet(e, "profile schools")
+	country := fs.String("country", "ID", "country code, e.g. ID or US")
+	query := fs.String("query", "", "filter by name substring")
+	limit := fs.Int("limit", 20, "maximum rows")
+	fs.Usage = func() {
+		fmt.Fprintln(e.stderr, "usage: freelancer profile schools --country ID --query komputer")
+		fmt.Fprintln(e.stderr, "education entries need the school_id this prints; a plain school name is dropped by the API")
+		fs.PrintDefaults()
+	}
+	if err := parseFlags(fs, args); err != nil {
+		return usageOrHelp(err)
+	}
+	client, _, err := e.newClient()
+	if err != nil {
+		return err
+	}
+	schools, err := client.Schools(ctx, *country, *query)
+	if err != nil {
+		return err
+	}
+	if *limit > 0 && len(schools) > *limit {
+		schools = schools[:*limit]
+	}
+	if e.jsonOut {
+		return writeJSON(e, schools)
+	}
+	for _, school := range schools {
+		fmt.Fprintf(e.stdout, "%-8d %s\n", school.ID, school.Name)
+	}
+	fmt.Fprintf(e.stdout, "\n%d schools\n", len(schools))
+	return nil
 }
 
 func profilePortfolio(ctx context.Context, e *env, args []string) error {
