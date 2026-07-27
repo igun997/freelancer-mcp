@@ -5,16 +5,23 @@ import (
 	"context"
 	"errors"
 	"flag"
+	"net/http"
+	"net/http/httptest"
 	"strings"
 	"testing"
 )
 
 func run(t *testing.T, args ...string) (string, string, error) {
 	t.Helper()
+	return runWithInput(t, "", args...)
+}
+
+func runWithInput(t *testing.T, input string, args ...string) (string, string, error) {
+	t.Helper()
 	t.Setenv("FREELANCER_SESSION_DIR", t.TempDir())
 	stdout := &bytes.Buffer{}
 	stderr := &bytes.Buffer{}
-	err := Run(context.Background(), args, stdout, stderr, strings.NewReader(""))
+	err := Run(context.Background(), args, stdout, stderr, strings.NewReader(input))
 	return stdout.String(), stderr.String(), err
 }
 
@@ -107,6 +114,62 @@ func TestLogoutOnCleanProfileSucceeds(t *testing.T) {
 	}
 	if !strings.Contains(stdout, "cleared session") {
 		t.Errorf("stdout = %q", stdout)
+	}
+}
+
+func TestLoginPromptsForOTPAfterServerChallenge(t *testing.T) {
+	testLoginPromptsForOTP(t, http.StatusUnauthorized, `{"status":"error","message":"Two-factor authentication code required","error_code":"AUTH_OTP_REQUIRED"}`)
+}
+
+func TestLoginPromptsForOTPAfterNoTokenChallenge(t *testing.T) {
+	// Freelancer can answer the first login attempt with HTTP 200 and an OTP
+	// challenge body instead of an error envelope. That must still prompt for the
+	// code, not stop at "response carried no token".
+	testLoginPromptsForOTP(t, http.StatusOK, `{"status":"success","result":{"otp_required":true,"message":"One-time code required"}}`)
+}
+
+func testLoginPromptsForOTP(t *testing.T, challengeStatus int, challengeBody string) {
+	t.Helper()
+	loginCalls := 0
+	var otpSeen string
+	mux := http.NewServeMux()
+	mux.HandleFunc("/auth/device", func(w http.ResponseWriter, _ *http.Request) {
+		_, _ = w.Write([]byte(`{"status":"success","result":{"token":"device-jwt"}}`))
+	})
+	mux.HandleFunc("/ajax-api/auth/login.php", func(w http.ResponseWriter, r *http.Request) {
+		loginCalls++
+		_ = r.ParseForm()
+		otpSeen = r.PostForm.Get("otp")
+		if otpSeen == "" {
+			w.WriteHeader(challengeStatus)
+			_, _ = w.Write([]byte(challengeBody))
+			return
+		}
+		_, _ = w.Write([]byte(`{"status":"success","result":{"token":"hash==","user":42,"userRole":"freelancer"}}`))
+	})
+	mux.HandleFunc("/api/users/0.1/self/", func(w http.ResponseWriter, _ *http.Request) {
+		_, _ = w.Write([]byte(`{"status":"success","result":{"id":42,"username":"me","email":"me@example.com","role":"freelancer"}}`))
+	})
+	server := httptest.NewServer(mux)
+	t.Cleanup(server.Close)
+	t.Setenv("FREELANCER_WEB_BASE", server.URL)
+	t.Setenv("FREELANCER_API_BASE", server.URL+"/api")
+
+	stdout, stderr, err := runWithInput(t, "secret\n654321\n", "login", "--user", "me@example.com")
+	if err != nil {
+		t.Fatalf("login: %v\nstderr:\n%s", err, stderr)
+	}
+	if loginCalls != 2 {
+		t.Fatalf("login calls = %d, want 2", loginCalls)
+	}
+	if otpSeen != "654321" {
+		t.Fatalf("otp = %q, want 654321", otpSeen)
+	}
+	if !strings.Contains(stderr, "one-time code") {
+		t.Fatalf("stderr missing OTP prompt: %q", stderr)
+	}
+	if !strings.Contains(stdout, "logged in as me") {
+		t.Fatalf("stdout = %q", stdout)
 	}
 }
 

@@ -2,6 +2,7 @@
 package cliapp
 
 import (
+	"bufio"
 	"context"
 	"encoding/json"
 	"errors"
@@ -27,6 +28,7 @@ type env struct {
 	stdout io.Writer
 	stderr io.Writer
 	stdin  io.Reader
+	input  *bufio.Reader
 
 	profile string
 	jsonOut bool
@@ -66,7 +68,7 @@ func commands() []command {
 
 // Run dispatches a subcommand.
 func Run(ctx context.Context, args []string, stdout, stderr io.Writer, stdin io.Reader) error {
-	e := &env{stdout: stdout, stderr: stderr, stdin: stdin, profile: session.DefaultProfile}
+	e := &env{stdout: stdout, stderr: stderr, stdin: stdin, input: bufio.NewReader(stdin), profile: session.DefaultProfile}
 
 	root := flag.NewFlagSet("freelancer", flag.ContinueOnError)
 	root.SetOutput(stderr)

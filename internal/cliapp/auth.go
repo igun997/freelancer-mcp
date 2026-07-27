@@ -1,7 +1,6 @@
 package cliapp
 
 import (
-	"bufio"
 	"context"
 	"errors"
 	"fmt"
@@ -34,8 +33,7 @@ func runLogin(ctx context.Context, e *env, args []string) error {
 	}
 
 	if *passwordStdin {
-		reader := bufio.NewReader(e.stdin)
-		line, err := reader.ReadString('\n')
+		line, err := e.input.ReadString('\n')
 		if err != nil && line == "" {
 			return fmt.Errorf("read password from stdin: %w", err)
 		}
@@ -64,6 +62,14 @@ func runLogin(ctx context.Context, e *env, args []string) error {
 		return err
 	}
 	result, err := client.Login(ctx, *user, *password, freelancer.LoginOptions{OTP: *otp})
+	if err != nil && *otp == "" && needsOTP(err) {
+		value, promptErr := prompt(e, "one-time code: ")
+		if promptErr != nil {
+			return promptErr
+		}
+		*otp = value
+		result, err = client.Login(ctx, *user, *password, freelancer.LoginOptions{OTP: *otp})
+	}
 	if err != nil {
 		return err
 	}
@@ -305,10 +311,19 @@ func runLogout(_ context.Context, e *env, args []string) error {
 	return nil
 }
 
+func needsOTP(err error) bool {
+	var apiErr *freelancer.APIError
+	if errors.As(err, &apiErr) {
+		text := strings.ToLower(apiErr.Code + " " + apiErr.Message + " " + apiErr.Body)
+		return strings.Contains(text, "otp") || strings.Contains(text, "two-factor") || strings.Contains(text, "2fa") || strings.Contains(text, "one-time") || strings.Contains(text, "verification code")
+	}
+	text := strings.ToLower(err.Error())
+	return strings.Contains(text, "otp") || strings.Contains(text, "two-factor") || strings.Contains(text, "2fa") || strings.Contains(text, "one-time") || strings.Contains(text, "verification code")
+}
+
 func prompt(e *env, label string) (string, error) {
 	fmt.Fprint(e.stderr, label)
-	reader := bufio.NewReader(e.stdin)
-	line, err := reader.ReadString('\n')
+	line, err := e.input.ReadString('\n')
 	if err != nil && line == "" {
 		return "", fmt.Errorf("read input: %w", err)
 	}

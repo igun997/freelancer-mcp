@@ -58,6 +58,7 @@ var hints = map[string]string{
 		"otherwise you create duplicates.",
 	"RestExceptionCodes.NOT_AUTHENTICATED": "the stored auth hash was rejected. Re-run `freelancer login`.",
 	"RestExceptionCodes.BAD_FORM":          "a required parameter is missing or the body encoding is wrong: some endpoints read form fields, not JSON.",
+	"TOO_MANY_REQUESTS":                    "stop retrying. Freelancer rate-limited this action; wait for the cooldown before trying again.",
 }
 
 // Hint returns actionable guidance for known error codes, empty when unknown.
@@ -79,6 +80,24 @@ func (e *APIError) Unwrap() error {
 func parseAPIError(method, url string, status int, body []byte) *APIError {
 	apiErr := &APIError{StatusCode: status, Method: method, URL: url, Body: string(body)}
 	_ = json.Unmarshal(body, apiErr)
+	if apiErr.Code != "" || apiErr.Message != "" {
+		return apiErr
+	}
+
+	var nested struct {
+		Status    string `json:"status"`
+		RequestID string `json:"request_id"`
+		Error     struct {
+			Code   string `json:"code"`
+			Detail string `json:"detail"`
+		} `json:"error"`
+	}
+	if err := json.Unmarshal(body, &nested); err == nil {
+		apiErr.Status = nested.Status
+		apiErr.RequestID = nested.RequestID
+		apiErr.Code = nested.Error.Code
+		apiErr.Message = nested.Error.Detail
+	}
 	return apiErr
 }
 
