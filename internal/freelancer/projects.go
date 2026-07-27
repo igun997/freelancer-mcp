@@ -13,8 +13,11 @@ import (
 
 // ProjectSearch filters the active project feed.
 type ProjectSearch struct {
-	Query        string
-	Jobs         []int64
+	Query string
+	Jobs  []int64
+	// MinBudget and MaxBudget filter on the project's average price in the
+	// account currency. The API only applies them when exactly one ProjectTypes
+	// entry is set, so SearchProjects defaults to "fixed" when bounds are given.
 	MinBudget    float64
 	MaxBudget    float64
 	Currencies   []int64
@@ -67,7 +70,22 @@ type ProjectList struct {
 }
 
 // SearchProjects queries the active project feed (the "Browse projects" page).
+//
+// Budget bounds are only honoured when exactly one project type is selected:
+// with no type, or with both fixed and hourly, the API silently ignores them and
+// returns everything. They also filter on the project's average price, not its
+// maximum, and are expressed in the account currency.
 func (c *Client) SearchProjects(ctx context.Context, opts ProjectSearch) (*ProjectList, error) {
+	if opts.MinBudget > 0 || opts.MaxBudget > 0 {
+		switch len(opts.ProjectTypes) {
+		case 0:
+			opts.ProjectTypes = []string{"fixed"}
+		case 1:
+		default:
+			return nil, errors.New("budget filters need exactly one project type: pass project_types [fixed] or [hourly], " +
+				"otherwise the API ignores min_budget and max_budget")
+		}
+	}
 	query := url.Values{}
 	if opts.Query != "" {
 		query.Set("query", opts.Query)

@@ -50,6 +50,7 @@ func commands() []command {
 		{"bids", "list your bids", runBids},
 		{"bid", "place, edit, retract, award, or highlight a bid", runBid},
 		{"quota", "remaining monthly bid allowance", runQuota},
+		{"limits", "what this account may bid on, and what blocks the rest", runLimits},
 		{"messages", "threads, history, send, mark read", runMessages},
 		{"milestones", "escrow milestones and payment requests", runMilestones},
 		{"money", "balances, invoices, payout accounts, membership", runMoney},

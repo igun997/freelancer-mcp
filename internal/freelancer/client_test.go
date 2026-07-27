@@ -495,3 +495,74 @@ func TestThreadActionSendsFormFields(t *testing.T) {
 		t.Error("expected an error without thread ids")
 	}
 }
+
+func TestBudgetFiltersRequireExactlyOneProjectType(t *testing.T) {
+	// The API silently drops min/max budget unless a single project type is set,
+	// so the client must not let a caller believe the filter applied.
+	var query url.Values
+	mux := http.NewServeMux()
+	mux.HandleFunc("/api/projects/0.1/projects/active/", func(w http.ResponseWriter, r *http.Request) {
+		query = r.URL.Query()
+		_, _ = w.Write([]byte(`{"status":"success","result":{"projects":[]}}`))
+	})
+	client, _ := testClient(t, mux)
+
+	if _, err := client.SearchProjects(context.Background(), ProjectSearch{MinBudget: 500}); err != nil {
+		t.Fatalf("search: %v", err)
+	}
+	if got := query["project_types[]"]; len(got) != 1 || got[0] != "fixed" {
+		t.Errorf("project_types[] = %v, want a single fixed default", got)
+	}
+
+	_, err := client.SearchProjects(context.Background(), ProjectSearch{
+		MinBudget:    500,
+		ProjectTypes: []string{"fixed", "hourly"},
+	})
+	if err == nil {
+		t.Error("expected an error when budget bounds cannot be applied")
+	}
+
+	if _, err := client.SearchProjects(context.Background(), ProjectSearch{ProjectTypes: []string{"fixed", "hourly"}}); err != nil {
+		t.Errorf("both types are fine without budget bounds: %v", err)
+	}
+}
+
+func TestAPIErrorHintsExplainRestrictions(t *testing.T) {
+	err := &APIError{
+		StatusCode: 403, Method: "POST", URL: "/api/projects/0.1/bids/",
+		Code:    "ProjectExceptionCodes.RESTRICTED_FROM_BIDDING_PREMIUM_VERIFIED",
+		Message: "You must be Verified by Freelancer to bid on projects $2500 USD and over",
+	}
+	text := err.Error()
+	if !strings.Contains(text, "hint:") || !strings.Contains(text, "Do not retry") {
+		t.Errorf("restriction should carry a hint: %s", text)
+	}
+	if (&APIError{Code: "SomeUnknownCode"}).Hint() != "" {
+		t.Error("unknown codes must not invent hints")
+	}
+}
+
+func TestCanBidAppliesEveryGate(t *testing.T) {
+	limits := &AccountLimits{BidsRemaining: 3, BidLimit: 6, MaxBidUSD: VerifiedBidCeilingUSD}
+	if ok, _ := limits.CanBid(400, false); !ok {
+		t.Error("a small non-featured project should be biddable")
+	}
+	if ok, why := limits.CanBid(2500, false); ok || !strings.Contains(why, "Verified") {
+		t.Errorf("2500 USD should need verification, got ok=%t why=%q", ok, why)
+	}
+	if ok, why := limits.CanBid(400, true); ok || !strings.Contains(why, "featured") {
+		t.Errorf("featured should be blocked, got ok=%t why=%q", ok, why)
+	}
+	spent := &AccountLimits{BidsRemaining: 0, MaxBidUSD: VerifiedBidCeilingUSD}
+	if ok, why := spent.CanBid(100, false); ok || !strings.Contains(why, "no bids left") {
+		t.Errorf("spent quota should block, got ok=%t why=%q", ok, why)
+	}
+	verified := &AccountLimits{BidsRemaining: 1, MaxBidUSD: 0, CanBidFeatured: true}
+	if ok, _ := verified.CanBid(9000, true); !ok {
+		t.Error("a verified account should clear both gates")
+	}
+	var nilLimits *AccountLimits
+	if ok, _ := nilLimits.CanBid(1, false); ok {
+		t.Error("unknown limits must not report biddable")
+	}
+}

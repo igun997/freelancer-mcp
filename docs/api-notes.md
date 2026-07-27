@@ -192,3 +192,29 @@ from the SPA's datastore chunks. They cover much more than this client wraps —
 contests, groups, tasks, hourly contracts, invoices, equipment, enterprise. Use
 them with `freelancer api` or `freelancer_api_call` when you need something that
 has no dedicated command.
+
+## Account restrictions an automated caller must respect
+
+These are enforced server side and reported as business errors, not HTTP failures:
+
+| Restriction | Error code | Unlock |
+| --- | --- | --- |
+| Projects worth 2500 USD or more | `ProjectExceptionCodes.RESTRICTED_FROM_BIDDING_PREMIUM_VERIFIED` | Verified by Freelancer (identity + payment) |
+| Featured projects | `ProjectExceptionCodes.RESTRICTED_FROM_BIDDING_ON_FEATURED` | 5 reviews, a paid membership, or verification |
+| Monthly bid allowance (6 on a free account) | bid rejected once spent | paid membership, or wait for the refill |
+| Skills | capped at 20 on a free account | paid membership |
+
+`AccountLimits` gathers quota, verification, reviews, membership, skills, and portfolio count into one struct
+with a `Blockers` list, and `CanBid(valueUSD, featured)` answers the biddability question before a proposal is
+written. The CLI exposes it as `freelancer limits`, the MCP server as `freelancer_account_limits`.
+
+## Search quirks
+
+- `min_avg_price` / `max_avg_price` are **silently ignored** unless exactly one `project_types[]` value is set.
+  With no type, or with both `fixed` and `hourly`, the feed comes back unfiltered. They also filter on the
+  project's average price, not its maximum, in the account currency.
+- Every project carries its own `currency` with an `exchange_rate`. A 12,500 INR budget is about 130 USD, so
+  ranking by raw budget across currencies is meaningless without converting first.
+- On hourly projects the bid `amount` is an hourly rate, and the listed budget is a rate range.
+- The feed is crowded: in a 643-project sample across web-dev skills, 493 already carried 50+ bids and only 7
+  had 10 or fewer. `sort_field=submitdate` plus `bid_stats.bid_count` is how you find something still winnable.

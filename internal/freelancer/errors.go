@@ -37,7 +37,35 @@ func (e *APIError) Error() string {
 	if e.Code == "" && e.Message == "" && e.Body != "" {
 		parts = append(parts, truncate(e.Body, 300))
 	}
+	if hint := e.Hint(); hint != "" {
+		parts = append(parts, "hint: "+hint)
+	}
 	return strings.Join(parts, ": ")
+}
+
+// hints turn Freelancer's error codes into the next action to take. Agents see
+// these appended to the error, so a refusal explains itself instead of looking
+// like a transport failure.
+var hints = map[string]string{
+	"ProjectExceptionCodes.RESTRICTED_FROM_BIDDING_PREMIUM_VERIFIED": "this project is $2500 USD or more, which needs Verified by Freelancer status on the account. " +
+		"Do not retry: pick a project under that ceiling, or ask the account owner to complete verification.",
+	"ProjectExceptionCodes.RESTRICTED_FROM_BIDDING_ON_FEATURED": "featured projects need 5 reviews, a paid membership, or Verified by Freelancer. " +
+		"Do not retry: skip featured projects for this account.",
+	"ProjectExceptionCodes.BID_LIMIT_EXCEEDED":         "the monthly bid allowance is spent. Check freelancer_account_limits for the refill time; do not retry until then.",
+	"ProjectExceptionCodes.ALREADY_BID_ON_PROJECT":     "a bid already exists on this project. Use bid update instead of placing another.",
+	"UserExceptionCodes.PROFILE_DESCRIPTION_TOO_SHORT": "profile_description must be at least 100 characters.",
+	"UserExceptionCodes.GAF_EXCEPTION": "this endpoint can fail while still writing a row. Read the collection back before retrying, " +
+		"otherwise you create duplicates.",
+	"RestExceptionCodes.NOT_AUTHENTICATED": "the stored auth hash was rejected. Re-run `freelancer login`.",
+	"RestExceptionCodes.BAD_FORM":          "a required parameter is missing or the body encoding is wrong: some endpoints read form fields, not JSON.",
+}
+
+// Hint returns actionable guidance for known error codes, empty when unknown.
+func (e *APIError) Hint() string {
+	if e == nil {
+		return ""
+	}
+	return hints[e.Code]
 }
 
 // Unwrap maps 401 responses to ErrUnauthorized so callers can retry auth.

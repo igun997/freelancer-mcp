@@ -243,3 +243,63 @@ func TestDestructiveToolsRequireConfirm(t *testing.T) {
 		}
 	}
 }
+
+func TestInstructionsCarryTheHardLimits(t *testing.T) {
+	// An agent driving this server has no other source for the marketplace rules
+	// that silently reject work, so initialize must state them.
+	input := `{"jsonrpc":"2.0","id":1,"method":"initialize","params":{}}
+`
+	server, out := newTestServer(t, input)
+	if err := server.Serve(context.Background()); err != nil {
+		t.Fatalf("serve: %v", err)
+	}
+	instructions := decodeResponses(t, out)[0]["result"].(map[string]any)["instructions"].(string)
+	for _, required := range []string{
+		"freelancer_account_limits", // check limits before proposing
+		"2500",                      // verified-only ceiling
+		"Featured",                  // featured restriction
+		"confirm=true",              // gates on destructive tools
+		"PROJECT's currency",        // bid amount units
+		"hourly rate",               // hourly semantics
+		"delivery days",             // period semantics
+		"do not retry",              // restrictions are answers, not transport errors
+		"terms",                     // decline ToS-breaking briefs
+		"never invent experience",   // no fabricated credentials
+	} {
+		if !strings.Contains(instructions, required) {
+			t.Errorf("instructions missing %q", required)
+		}
+	}
+}
+
+func TestAccountLimitsToolIsRegisteredAndSessionGated(t *testing.T) {
+	var found bool
+	for _, tool := range tools() {
+		if tool.Name != "freelancer_account_limits" {
+			continue
+		}
+		found = true
+		if tool.SkipSession {
+			t.Error("account limits needs a session")
+		}
+		if !strings.Contains(tool.Description, "before writing any proposal") {
+			t.Errorf("description should tell the agent when to call it: %q", tool.Description)
+		}
+	}
+	if !found {
+		t.Fatal("freelancer_account_limits not registered")
+	}
+}
+
+func TestBidPlaceDescriptionExplainsUnits(t *testing.T) {
+	for _, tool := range tools() {
+		if tool.Name != "freelancer_bid_place" {
+			continue
+		}
+		for _, required := range []string{"PROJECT's currency", "hourly rate", "days", "2500", "confirm"} {
+			if !strings.Contains(tool.Description, required) {
+				t.Errorf("bid_place description missing %q", required)
+			}
+		}
+	}
+}
