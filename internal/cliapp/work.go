@@ -330,6 +330,53 @@ func runQuota(ctx context.Context, e *env, args []string) error {
 	return nil
 }
 
+func runLimits(ctx context.Context, e *env, args []string) error {
+	fs := newFlagSet(e, "limits")
+	if err := parseFlags(fs, args); err != nil {
+		return usageOrHelp(err)
+	}
+	client, _, err := e.newClient()
+	if err != nil {
+		return err
+	}
+	limits, err := client.AccountLimits(ctx)
+	if err != nil {
+		return err
+	}
+	if e.jsonOut {
+		return writeJSON(e, limits)
+	}
+	fmt.Fprintf(e.stdout, "account      %s (%d)\n", limits.Username, limits.UserID)
+	if limits.UnlimitedBids {
+		fmt.Fprintln(e.stdout, "bids         unlimited")
+	} else {
+		fmt.Fprintf(e.stdout, "bids         %d of %d left", limits.BidsRemaining, limits.BidLimit)
+		if limits.BidsRefillIn != "" {
+			fmt.Fprintf(e.stdout, ", refills in %s", limits.BidsRefillIn)
+		}
+		fmt.Fprintln(e.stdout)
+	}
+	if limits.MaxBidUSD > 0 {
+		fmt.Fprintf(e.stdout, "bid ceiling  under $%.0f USD per project\n", limits.MaxBidUSD)
+	} else {
+		fmt.Fprintln(e.stdout, "bid ceiling  none")
+	}
+	fmt.Fprintf(e.stdout, "featured     %s\n", boolLabel(limits.CanBidFeatured, "biddable", "blocked"))
+	fmt.Fprintf(e.stdout, "verified     email=%t phone=%t payment=%t identity=%t\n",
+		limits.EmailVerified, limits.PhoneVerified, limits.PaymentVerified, limits.IdentityVerified)
+	fmt.Fprintf(e.stdout, "reputation   %d reviews, rating %.1f\n", limits.ReviewCount, limits.Rating)
+	fmt.Fprintf(e.stdout, "membership   %s\n", boolLabel(limits.PaidMembership, "paid", "free"))
+	fmt.Fprintf(e.stdout, "profile      %d skills, %d portfolio items, $%.2f/hr\n",
+		limits.SkillCount, limits.PortfolioItems, limits.HourlyRate)
+	for _, blocker := range limits.Blockers {
+		fmt.Fprintf(e.stdout, "BLOCKED      %s\n", blocker)
+	}
+	for _, note := range limits.Notes {
+		fmt.Fprintf(e.stdout, "note         %s\n", note)
+	}
+	return nil
+}
+
 func runMessages(ctx context.Context, e *env, args []string) error {
 	sub := "threads"
 	if len(args) > 0 && !strings.HasPrefix(args[0], "-") {

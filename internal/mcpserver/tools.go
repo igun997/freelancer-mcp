@@ -373,14 +373,18 @@ func workTools() []tool {
 		{
 			Name: "freelancer_projects_search",
 			Description: "Search the active project feed. Combine query with job_ids (from freelancer_skills_search), " +
-				"budget bounds, and project_types (fixed, hourly).",
+				"budget bounds, and project_types (fixed, hourly). Two things to know: budget bounds are only applied when " +
+				"exactly one project_type is set and they match the project's average price in the account currency; and " +
+				"projects carry a currency, so compare budgets in USD using currency.exchange_rate before judging value. " +
+				"Most listings already hold 50+ bids, so sort_field=submitdate and a low bid_stats.bid_count are the useful " +
+				"signals.",
 			Schema: obj(map[string]any{
 				"query":            str("search terms"),
 				"job_ids":          ints("skill ids to filter on"),
-				"project_types":    strs("fixed, hourly"),
+				"project_types":    strs("fixed, hourly; required when using budget bounds"),
 				"languages":        strs("language codes, e.g. en"),
-				"min_budget":       float("minimum average price"),
-				"max_budget":       float("maximum average price"),
+				"min_budget":       float("minimum average price, account currency"),
+				"max_budget":       float("maximum average price, account currency"),
 				"sort_field":       str("submitdate (default), bid_enddate, bid_count"),
 				"limit":            num("page size, default 20"),
 				"offset":           num("result offset"),
@@ -490,9 +494,20 @@ func workTools() []tool {
 			},
 		},
 		{
+			Name: "freelancer_account_limits",
+			Description: "Call this before writing any proposal. Returns what the account may bid on right now: bids left " +
+				"this cycle, the USD ceiling per project (2500 without Verified by Freelancer), whether featured projects " +
+				"are reachable, verification and review status, and a plain list of blockers. Skipping it wastes bids on " +
+				"projects the API will refuse.",
+			Schema: obj(map[string]any{}),
+			Handler: func(ctx context.Context, s *Server, _ map[string]any) (any, error) {
+				return s.client.AccountLimits(ctx)
+			},
+		},
+		{
 			Name: "freelancer_bid_quota",
-			Description: "Remaining monthly bid allowance and when it refills. Check this before bidding, " +
-				"a rejected bid still burns the user's attention.",
+			Description: "Bids left this cycle and when the allowance refills. freelancer_account_limits returns this " +
+				"plus the restrictions that decide whether a project is biddable at all.",
 			Schema: obj(map[string]any{}),
 			Handler: func(ctx context.Context, s *Server, _ map[string]any) (any, error) {
 				return s.client.BidQuota(ctx)
@@ -500,11 +515,15 @@ func workTools() []tool {
 		},
 		{
 			Name: "freelancer_bid_place",
-			Description: "Submit a proposal on a project. Spends one bid from the monthly quota and is immediately " +
-				"visible to the client, so confirm must be true and the proposal text must be the user's own offer.",
+			Description: "Submit a proposal. Spends one bid from a small monthly allowance and is visible to the client " +
+				"immediately, so confirm must be true and the description must be the user's own offer. " +
+				"amount is in the PROJECT's currency, not USD: read currency.code from the project first. On hourly " +
+				"projects amount is the hourly rate. period is delivery time in days. Check freelancer_account_limits " +
+				"first: projects at 2500 USD or more, and featured projects, are refused for unverified accounts and the " +
+				"attempt still costs a round trip.",
 			Schema: obj(map[string]any{
 				"project_id":           num("project id"),
-				"amount":               float("bid amount in the project currency"),
+				"amount":               float("bid amount in the project's currency; hourly rate on hourly projects"),
 				"period":               num("delivery time in days"),
 				"description":          str("proposal text"),
 				"milestone_percentage": num("upfront milestone share, default 50"),

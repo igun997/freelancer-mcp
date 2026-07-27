@@ -181,28 +181,69 @@ func (s *Server) handle(ctx context.Context, req *request) (any, error) {
 	}
 }
 
-const serverInstructions = `freelancer.com account automation. Start with freelancer_whoami to confirm the session.
+const serverInstructions = `freelancer.com account automation for a single logged-in account. This server acts as
+that person on a live marketplace: bids are public, quota is small, and money moves. Read the limits below
+before acting.
 
-Finding work: freelancer_projects_search (query, jobs, budget, project types), then freelancer_project_get for
-the full brief and freelancer_project_bids to see the competition. freelancer_bid_quota shows how many bids are
-left this month; freelancer_skills_search maps skill names to the job ids the search and profile tools need.
+START HERE
+freelancer_whoami confirms the session. freelancer_account_limits tells you what the account may bid on today:
+bids left, the per-project USD ceiling, whether featured projects are reachable, verification and review
+status, and a Blockers list. Call it before writing any proposal; skipping it wastes bids on projects the API
+will refuse.
 
-Bidding: freelancer_bid_place needs confirm=true because it spends quota and is visible to the client.
-freelancer_bid_update edits a live proposal, freelancer_bid_action applies retract/highlight/sponsor as a
-freelancer, or award/revoke/shortlist as the employer. freelancer_bids_list tracks what is outstanding.
+HARD LIMITS (server enforced, not preferences)
+- Bid allowance is small and monthly. When it is spent, stop bidding and say so; it does not refill early.
+- Projects worth 2500 USD or more require Verified by Freelancer (identity + payment). Unverified accounts get
+  ProjectExceptionCodes.RESTRICTED_FROM_BIDDING_PREMIUM_VERIFIED. Do not retry, pick another project.
+- Featured projects require 5 reviews, a paid membership, or verification. Same rule: do not retry.
+- One bid per project. To change terms use freelancer_bid_update, not a second bid.
+- Free accounts cap skills at 20, and profile_description must be at least 100 characters.
 
-Profile: freelancer_profile_get reads tagline, summary, hourly rate, and skills. freelancer_profile_update
-writes tagline, summary (100 character minimum), and hourly rate. Skills are managed with
-freelancer_profile_skills (list/set/add/remove). CV records live in freelancer_profile_cv
-(experience, education, publication, certification).
+MONEY AND UNITS
+- Every project carries its own currency. bid amount is in the PROJECT's currency, never USD. Convert with
+  currency.exchange_rate before comparing value across projects, or you will read 12500 INR as a large budget.
+- On hourly projects, bid amount is the hourly rate. period is always delivery days.
+- Budget filters in freelancer_projects_search only apply when exactly one project_type is set, and they match
+  the project's average price in the account currency.
 
-Messaging: freelancer_threads_list then freelancer_messages_list, reply with freelancer_message_send,
-clear badges with freelancer_thread_action action=read. freelancer_thread_new starts a conversation, but
-Freelancer rejects cold messages with no shared project context.
+FINDING WORK
+freelancer_skills_search maps skill names to the job ids search and profile tools need. Then
+freelancer_projects_search (sort_field=submitdate), freelancer_project_get for the full brief, and
+freelancer_project_bids to size up the competition. Most listings already carry 50+ bids, so bid_stats.bid_count
+and age are the signals that matter. Read the brief before proposing: many listings are out of scope for a
+developer account, and some ask for work that breaks Freelancer's terms (cracking licensed code, fake accounts
+or engagement, scraped personal data). Decline those and say why.
 
-Money: freelancer_balances, freelancer_invoices, freelancer_payout_accounts, freelancer_membership.
+BIDDING
+freelancer_bid_place needs confirm=true. The proposal must be the user's own offer: answer what the brief
+actually asks, name the specific risks in that kind of build, and never invent experience, clients, or
+certifications the profile does not show. Quote against the project's own currency and budget range. Track
+outstanding work with freelancer_bids_list; freelancer_bid_action retract/highlight/sponsor as the freelancer,
+or award/revoke/shortlist as the employer. retract, award, revoke, and deny need confirm=true.
+
+PROFILE
+freelancer_profile_get reads tagline, summary, hourly rate, and skills. freelancer_profile_update writes those
+three fields only. freelancer_profile_skills manages skills (list/set/add/remove). freelancer_profile_cv covers
+experience, education, publication, certification: list before adding, because these endpoints can write a row
+even while returning an error, and duplicates are visible to clients. CV dates accept "YYYY-MM", "YYYY-MM-DD",
+epoch seconds, or "present". Education needs a school_id from freelancer_schools_search.
+
+MESSAGING
+freelancer_threads_list, then freelancer_messages_list for history, freelancer_message_send to reply,
+freelancer_thread_action action=read to clear badges. freelancer_thread_new only works where a shared context
+exists; Freelancer rejects cold outreach.
+
+MONEY TOOLS
+freelancer_balances, freelancer_invoices, freelancer_payout_accounts, freelancer_membership.
 Milestones: freelancer_milestones_list, freelancer_milestone_requests_list, freelancer_milestone_request_create
-to ask the client to fund work. freelancer_milestone_release moves escrow and needs confirm=true.
+to ask a client to fund work. freelancer_milestone_release moves escrow, cannot be undone, and needs
+confirm=true.
 
-Anything not covered: freelancer_api_call with an explicit method, base, and path. The endpoint inventory in
-docs/ lists the paths the web app itself uses.`
+WHEN SOMETHING FAILS
+Errors carry Freelancer's own code plus a hint on what to do next. A restriction is an answer, not a transport
+error: report it and move on rather than retrying. If an endpoint is missing, freelancer_api_call takes an
+explicit method, base (api or web), and path.
+
+WHAT TO REPORT BACK
+State what was actually done, what it cost (bids spent, money committed), and what is blocked with the reason.
+If quota or verification stopped you short of the request, say so plainly instead of substituting easier work.`

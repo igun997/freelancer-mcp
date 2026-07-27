@@ -7,7 +7,7 @@ Two binaries:
 | Binary | Purpose |
 | --- | --- |
 | `freelancer` | CLI for humans and scripts |
-| `freelancer-mcp` | Model Context Protocol server on stdio for AI agents (44 tools) |
+| `freelancer-mcp` | Model Context Protocol server on stdio for AI agents (45 tools) |
 
 Works on freelancer.com and its regional domains (freelancer.co.id, freelancer.com.au, …) — they share one account system and one API.
 
@@ -100,6 +100,7 @@ freelancer freelancers --query golang --limit 5
 
 # bidding
 freelancer quota
+freelancer limits                            # what you may bid on, and what blocks the rest
 freelancer bid place --project 40608147 --amount 250 --days 7 --proposal-file pitch.md
 freelancer bid update --id 165487951 --amount 300
 freelancer bid retract --id 165487951
@@ -160,13 +161,15 @@ Tool groups:
 - **Work** — `freelancer_projects_search`, `freelancer_project_get`, `freelancer_project_bids`, `freelancer_projects_mine`, `freelancer_project_post`, `freelancer_bids_list`, `freelancer_bid_quota`, `freelancer_bid_place`, `freelancer_bid_update`, `freelancer_bid_action`, `freelancer_manage_bids`
 - **Messaging** — `freelancer_threads_list`, `freelancer_messages_list`, `freelancer_messages_search`, `freelancer_message_send`, `freelancer_thread_action`, `freelancer_thread_new`, `freelancer_thread_attachments`, `freelancer_notifications`, `freelancer_saved_searches`
 - **Money** — `freelancer_balances`, `freelancer_invoices`, `freelancer_payout_accounts`, `freelancer_membership`, `freelancer_milestones_list`, `freelancer_milestone_requests_list`, `freelancer_milestone_request_create`, `freelancer_milestone_request_action`, `freelancer_milestone_release`
+- **Guardrails** — `freelancer_account_limits` (bids left, USD ceiling, featured access, blockers)
 - **Escape hatch** — `freelancer_api_call`
 
 Actions that cost money, spend quota, or cannot be undone require `confirm=true`: `freelancer_bid_place`, `freelancer_project_post`, `freelancer_milestone_release`, and `freelancer_bid_action` for retract, award, revoke, deny.
 
 ## Notes on the platform
 
-- **Bid quota.** Free accounts get a small monthly allowance (`freelancer quota`). Featured or high-value projects also require 5+ reviews, a paid membership, or identity verification, and the API says so plainly when it refuses.
+- **Bid quota and ceilings.** Free accounts get a small monthly allowance, projects worth **$2,500 USD or more need Verified by Freelancer**, and featured projects need 5 reviews, a paid membership, or verification. `freelancer limits` reports all of it, including what is currently blocking you, so you do not spend bids on projects the API will refuse.
+- **Currencies.** Each project has its own currency; a bid amount is in the project's currency, and on hourly projects it is an hourly rate. Convert with `currency.exchange_rate` before comparing budgets.
 - **Profile writes.** `PUT /users/0.1/self/profile` accepts exactly three fields: `tagline`, `profile_description`, `hourly_rate`. Other account settings live behind separate endpoints (`self/account`, `self/primary_currency`, `self/operating_areas`).
 - **CV dates.** Freelancer stores epoch seconds but reinterprets them in GMT+7, so a first-of-month date renders as the previous month. Pass `"YYYY-MM"`, `"YYYY-MM-DD"`, or `"present"` and the client anchors mid-month for you. Education entries need a `school_id` from `freelancer profile schools`; a plain school name is dropped by the API.
 - **Cold messages.** Freelancer rejects new threads to users with no shared project context.
