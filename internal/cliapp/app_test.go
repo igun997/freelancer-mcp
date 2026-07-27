@@ -147,3 +147,47 @@ func TestPermuteArgsMovesFlagsFirst(t *testing.T) {
 		t.Errorf("permuteArgs = %v, want %v", got, want)
 	}
 }
+
+func TestMessagesActionAcceptsActionAndThreadTogether(t *testing.T) {
+	// Regression: --action was parsed in one flag set and the same args were
+	// re-parsed by another that had no --thread, so every non-read action failed
+	// with "flag provided but not defined".
+	_, stderr, err := run(t, "messages", "action", "--action", "star", "--thread", "1")
+	if strings.Contains(stderr, "not defined") {
+		t.Fatalf("flag parsing rejected valid flags: %s", stderr)
+	}
+	if errors.Is(err, ErrUsage) {
+		t.Fatalf("valid invocation reported a usage error: %s", stderr)
+	}
+	// Without a session the command must fail on auth, not on parsing.
+	if err == nil {
+		t.Fatal("expected a session error")
+	}
+	if !strings.Contains(err.Error(), "no active session") {
+		t.Errorf("err = %v, want a session error", err)
+	}
+}
+
+func TestMessagesActionStillRequiresThreadAndAction(t *testing.T) {
+	if _, _, err := run(t, "messages", "action", "--action", "star"); !errors.Is(err, ErrUsage) {
+		t.Errorf("missing thread err = %v, want ErrUsage", err)
+	}
+	if _, _, err := run(t, "messages", "action", "--thread", "1"); !errors.Is(err, ErrUsage) {
+		t.Errorf("missing action err = %v, want ErrUsage", err)
+	}
+}
+
+func TestProfileCVListAndSchoolsAreWired(t *testing.T) {
+	for _, args := range [][]string{
+		{"profile", "cv", "--section", "experience", "--list"},
+		{"profile", "schools", "--country", "ID", "--query", "komputer"},
+	} {
+		_, stderr, err := run(t, args...)
+		if errors.Is(err, ErrUsage) {
+			t.Errorf("%v reported a usage error: %s", args, stderr)
+		}
+	}
+	if _, _, err := run(t, "profile", "cv", "--section", "hobbies", "--list"); err == nil {
+		t.Error("expected an error for an unknown cv section")
+	}
+}

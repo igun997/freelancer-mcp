@@ -73,7 +73,6 @@ func (c *Client) SearchProjects(ctx context.Context, opts ProjectSearch) (*Proje
 		query.Set("query", opts.Query)
 	}
 	query = merge(query, idList("jobs", opts.Jobs))
-	query = merge(query, idList("project_upgrades", nil))
 	for _, t := range opts.ProjectTypes {
 		query.Add("project_types[]", t)
 	}

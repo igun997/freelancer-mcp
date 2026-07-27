@@ -95,16 +95,32 @@ triggers one re-login when credentials were saved.
 | GET | `users/0.1/portfolios/` | portfolio items |
 | GET | `users/0.1/users/directory/` | freelancer search |
 | POST/PUT/DELETE | `users/0.1/experiences`, `educations`, `publications`, `certifications` | CV records |
+| GET | `users/0.1/users/{id}/experiences`, `educations`, `publications`, `certifications` | read the same records; pass `limit`, the default page is tiny |
+| GET | `users/0.1/universities?country_codes[]=ID` | school ids for education records (filter by name client side) |
 | PUT | `users/0.1/profiles` | specialised profiles: `profile_name`, `tagline`, `description`, `hourly_rate`, `skill_ids` |
 
 Validation learned from the API itself:
 
 - `profile_description` must be ≥ 100 characters (`UserExceptionCodes.PROFILE_DESCRIPTION_TOO_SHORT`).
-- `experiences` needs `title`, `company`, `start_date`.
-- `educations` needs a school, `country_code`, `degree`, `start_date`.
-- `publications` needs `title`; `certifications` needs `certificate` and `awarded_date`.
+- `experiences` needs `title`, `company`, `start_date`, **and `end_date`**. Without
+  `end_date` the call answers HTTP 500 `UserExceptionCodes.GAF_EXCEPTION` and
+  still inserts the row, minus the description. For an ongoing role, create it
+  closed and then `PUT` the full payload with `end_date: null`. The client does
+  this for you (`AddCVEntry`).
+- `educations` needs `school_id`, `country_code`, `degree`, `start_date`.
+  `other_school_name` is accepted and silently dropped, which leaves a nameless
+  entry. Resolve the id through `users/0.1/universities?country_codes[]=<CC>`
+  (Universitas Komputer Indonesia Bandung = 3997).
+- `publications` needs `title`; `certifications` needs `certificate` and
+  `awarded_date`, and takes `organization`.
 - `POST` with an empty body can still create a blank row (`educations` does), so
   validate before calling.
+- **Timestamps drift.** Dates are epoch seconds, but the API reinterprets them in
+  GMT+7, so `2018-01-01T00:00Z` reads back as December 2017 and renders as the
+  wrong month. Anchor dates to midday mid-month; `ParseCVDate` does that and also
+  accepts `"YYYY-MM"`, `"YYYY-MM-DD"`, and `"present"`.
+- PUT on a CV record is a **full replacement**: resend every field you want to
+  keep, or it comes back null.
 
 ### Projects and bids
 

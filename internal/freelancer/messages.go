@@ -170,7 +170,9 @@ func ThreadActions() []string {
 	}
 }
 
-// ThreadAction applies an action to threads, e.g. marking them read.
+// ThreadAction applies an action to threads, e.g. marking them read. The
+// endpoint reads the payload as form fields; a JSON body is rejected with
+// "Missing required parameter 'action'".
 func (c *Client) ThreadAction(ctx context.Context, threadIDs []int64, action string) (json.RawMessage, error) {
 	if err := c.requireSession(); err != nil {
 		return nil, err
@@ -181,8 +183,15 @@ func (c *Client) ThreadAction(ctx context.Context, threadIDs []int64, action str
 	if action == "" {
 		action = ThreadActionRead
 	}
-	payload := map[string]any{"threads": threadIDs, "action": action}
-	return c.API(ctx, http.MethodPut, "/messages/0.1/threads/", nil, payload)
+	form := url.Values{"action": {action}}
+	for _, id := range threadIDs {
+		form.Add("threads[]", strconv.FormatInt(id, 10))
+	}
+	return c.DoRaw(ctx, Request{
+		Method: http.MethodPut,
+		Path:   "/messages/0.1/threads/",
+		Form:   form,
+	})
 }
 
 // ThreadAttachments lists files shared in a thread.
